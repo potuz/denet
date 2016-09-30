@@ -1,0 +1,44 @@
+denet is a project to automatically extract information from balance sheets of companies listed in the BMF&Bovespa stock exchange, store them in a database and allow queries for financial indicators. 
+
+1) 
+Importing accounts: *) The database uses mysql and it consists of a few
+tables, one table contains the list of companies with their unique CVM code and
+their description, sector, etc.  Another table contains the account codes along
+with their descriptions and all accounts for each company of all balances.
+Another table contains the downloaded and imported versions of each file.  
+
+*) The accounts on the <InfoFinaDFin> are different for DFPs than ITRs. The
+  periods used for each account are described in the file Periodo*.xml. However,
+  it seems that always for DFPs:
+ValorConta1: Current Exercise (year)
+ValorConta2: Previous Year
+ValorConta3: Previous to last. 
+
+*) For ITRs the accounts are:
+ValorConta2: End of this Trimester (value of this trimester for DRE, etc)
+ValorConta3: End of previous year
+ValorConta4: Accumulated in the year(**)
+ValorConta5: Same trimester of previous year
+ValorConta6: Accumulated previous year. 
+
+(**)Note that this is important for DFC and DVA. and most importantly if the ITR is the first one! However, for The BalanceTypes BPA and BPP on the first ITR we need to use the ValorConta2.
+
+*)The order of the accounts for Balance "Demostrações de mutações no PL"
+(balance_type 8) is different and seems to be
+
+1 - Capital Social Integralizado
+2 - Reservas de Capital
+3 - Reservas de Lucro 
+4 - Lucros/Prejus acumulados 
+5 - Outros resultados abrangentes
+6 - Patrimonio Liquido
+
+And here the period is informed in NumeroIdentificacaoPeriodo in the account,
+    while in the previous examples this was zero. For DFP we want 1 and for ITR
+    we will want 4. 
+
+2) Importing the FRE might be important 
+AdministradorMembroConselhoFiscalNegocios.xml: contains the short description
+and CV of the members of the counsil. 
+Dividas.xml: breakdown of liabilities. 
+
