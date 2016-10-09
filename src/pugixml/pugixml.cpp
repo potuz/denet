@@ -1,14 +1,14 @@
 /**
  * pugixml parser - version 1.7
  * --------------------------------------------------------
- * Copyleft (C) 2006-2015, by Arseny Kapoulkine (arseny.kapoulkine@gmail.com)
+ * Copyright (C) 2006-2015, by Arseny Kapoulkine (arseny.kapoulkine@gmail.com)
  * Report bugs and download new versions at http://pugixml.org/
  *
  * This library is distributed under the MIT License. See notice at the end
  * of this file.
  *
  * This work is based on the pugxml parser, which is:
- * Copyleft (C) 2003, by Kristen Wegner (kristen@tima.net)
+ * Copyright (C) 2003, by Kristen Wegner (kristen@tima.net)
  */
 
 #ifndef SOURCE_PUGIXML_CPP
@@ -12419,7 +12419,7 @@ namespace pugi
 #endif
 
 /**
- * Copyleft (c) 2006-2015 Arseny Kapoulkine
+ * Copyright (c) 2006-2015 Arseny Kapoulkine
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation

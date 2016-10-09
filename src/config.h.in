@@ -16,5 +16,11 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#define DATAFILE_PATH "@DATAFILE_PATH@"
+#ifndef CONFIG_H_INCLUDED
+#define CONFIG_H_INCLUDED
 
+#define DATAFILE_PATH "@DATAFILE_PATH@"
+#define IMAGEFILE_PATH "@IMAGEFILE_PATH@"
+#define PROJECT_VERSION_COMPLETE "@PROJECT_VERSION_COMPLETE@"
+
+#endif
