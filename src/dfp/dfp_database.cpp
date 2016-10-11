@@ -135,9 +135,17 @@ std::tm Dfp::Database::last_imported_exercise ( int cvm ) const
   std::unique_ptr< sql::ResultSet> res ( stmt->executeQuery ( 
         "SELECT MAX( exercise ) FROM revisions where cvm=" + 
         std::to_string ( cvm ) ) );
-  if (!res->next()) throw std::invalid_argument (
-      "Dfp::Database::last_imported_exercise: no exercise imported for cvm " +
-      std::to_string ( cvm ) );
+  if (!res->next()) {
+    std::string what_arg = "Dfp::Database::last_imported_exercise: "
+      "no exercise imported for cvm " + std::to_string (cvm);
+    throw Dfp::Exception(what_arg.c_str(), EXCEPTION_NO_EXERCISE);
+  }
+  std::string test_empty ( res->getString(1) );
+  if (test_empty.empty()) {
+    std::string what_arg = "Dfp::Database::last_imported_exercise: "
+      "no exercise imported for cvm " + std::to_string (cvm);
+    throw Dfp::Exception(what_arg.c_str(), EXCEPTION_NO_EXERCISE);
+  }
   //TODO: use iomanip get_time when available c++17
   std::tm tm;
   std::stringstream date_str ( res->getString (1) ); 
@@ -407,8 +415,10 @@ float Dfp::Database::get_indicator ( int cvm,  Dfp::Indicator indicator,
                              if (anual) return ret;
                              else return ret/4;
                            }
-    case DFP_INDICATOR_EARNSHARE: return (float) f("3.11")/f("1.89.03");
-    case DFP_INDICATOR_VPA: return (float) f("2.03")/f("1.89.03");
+    case DFP_INDICATOR_EARNSHARE: return (float) f("3.11")/get_indicator(cvm, 
+                                      "1.89.03", exercise);
+    case DFP_INDICATOR_VPA: return (float) f("2.03")/get_indicator(cvm, 
+                                "1.89.03", exercise);
     case DFP_INDICATOR_MB: return (float) f("3.03")/f("3.01");
     case DFP_INDICATOR_MEBIT: return f(DFP_INDICATOR_EBIT)/f("3.01");
     case DFP_INDICATOR_ML: return (float) f("3.11")/f("3.01");

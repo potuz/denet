@@ -23,6 +23,7 @@
 
 QT_BEGIN_NAMESPACE
 class QString;
+class QStringList;
 QT_END_NAMESPACE
 
 class GenetDatabase : public Dfp::Database
@@ -33,6 +34,9 @@ class GenetDatabase : public Dfp::Database
     using Dfp::Database::get_indicator;
     int get_indicator (int cvm, QString account_number, bool anual,
         Dfp::FinancialInfoType type) const;
+    void tickers(QStringList &codes) const;
+    using Dfp::Database::get_cvm_from_ticker_str;
+    int get_cvm_from_ticker_str (const QString &str) const;
 };
 
 #endif

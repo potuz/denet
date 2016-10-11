@@ -24,15 +24,18 @@
 #include "config.h"
 #include "database_wizard.h"
 #include "genet_database.h"
+#include "indicator_view.h"
 
 MainWindow::MainWindow() : 
-  mainstackedwidget ( new QStackedWidget )
+  mainStackedWidget ( new QStackedWidget ),
+  anual(true), 
+  financial_info_type(Dfp::DFP_FINANCIAL_INFO_CONSOLIDATED)
 {
-  setCentralWidget (mainstackedwidget);
+  setCentralWidget (mainStackedWidget);
 
+  readSettings();
   createActions();
   createStatusBar();
-  readSettings();
 }
 
 
@@ -49,28 +52,40 @@ void MainWindow::setFinancialInfoType (int index)
   int value = qobject_cast<QComboBox*>(sender())->currentIndex();
   financial_info_type = static_cast<Dfp::FinancialInfoType> (++value);
 
-  QString printable = QStringLiteral ( "Financial_info changed to %1" ).arg(
-      static_cast<int>(financial_info_type));
-  statusBar()->showMessage(printable);
+  switch (financial_info_type) {
+    case  Dfp::DFP_FINANCIAL_INFO_CONSOLIDATED: 
+      statusBar()->showMessage(tr("Monstrando dados consolidados."));
+      break;
+    case Dfp::DFP_FINANCIAL_INFO_INDIVIDUAL:
+      statusBar()->showMessage(tr("Monstrando dados individuais."));
+      break;
+  }
+  emit changedType(financial_info_type);
 }
 
 void MainWindow::setCompany()
 {
+  cvm = conn->get_cvm_from_ticker_str(qobject_cast<QLineEdit*>(sender())->
+      text());
+  QString printable = QStringLiteral(
+      "Mostrando dados da companhia com cvm %1").arg(cvm);
+  statusBar()->showMessage(printable);
+  emit changedCvm(cvm);
 }
 
 void MainWindow::setAnual (int state)
 {
-  QString printable;
   if (state == 2) {
     anual = true;
-    printable = tr("Mostrando resultados anualizados");
+    statusBar()->showMessage(tr("Mostrando resultados anualizados"));
   }
   else { 
-    printable = tr("Mostrando resultados trimestrais");
+    statusBar()->showMessage(tr("Mostrando resultados trimestrais"));
     anual = false;
   }
-  statusBar()->showMessage(printable);
+  emit changedAnual(anual);
 }
+
 void MainWindow::companyTextEdited(const QString &arg1)
 {
       qobject_cast<QLineEdit*>(sender())->setText(arg1.toUpper());
@@ -100,6 +115,10 @@ void MainWindow::help()
 {
 }
 
+void MainWindow::showIndicators()
+{
+}
+
 void MainWindow::createActions()
 {
   QMenu *dbMenu = menuBar()->addMenu(tr("&Database"));
@@ -122,15 +141,24 @@ void MainWindow::createActions()
       SLOT (companyTextEdited(const QString& )));
   dbToolBar->addWidget(companyLineEdit);
 
+  QStringList codes;
+  conn->tickers(codes);
+  
+  QCompleter *completer = new QCompleter(codes, this);
+  completer->setCaseSensitivity(Qt::CaseInsensitive);
+  companyLineEdit->setCompleter(completer);
+
   QWidget *emptySpace = new QWidget();
   emptySpace->setMinimumWidth(20);
   dbToolBar->addWidget(emptySpace);
 
   QComboBox *ftypeComboBox = new QComboBox (dbToolBar);
   ftypeComboBox->addItems({"Individual","Consolidado"});
+  ftypeComboBox->setCurrentIndex(1);
   dbToolBar->addWidget(ftypeComboBox);
   connect (ftypeComboBox, SIGNAL(currentIndexChanged(int)), this, 
       SLOT(setFinancialInfoType(int)));
+  financial_info_type = Dfp::DFP_FINANCIAL_INFO_CONSOLIDATED;
 
   QWidget *emptySpace2 = new QWidget();
   emptySpace2->setMinimumWidth(20);
@@ -141,6 +169,7 @@ void MainWindow::createActions()
   dbToolBar->addWidget(anualCheckBox);
   connect (anualCheckBox, SIGNAL(stateChanged(int)), this, 
       SLOT(setAnual(int)));
+  anualCheckBox->setChecked(true);
 
   QWidget *emptySpace3 = new QWidget();
   emptySpace3->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
@@ -165,6 +194,13 @@ void MainWindow::createActions()
   dbMenu->addAction(quitAction);
   dbToolBar->addAction(quitAction);
 
+  QMenu *viewMenu = menuBar()->addMenu(tr("&Ver"));
+//  QAction *summaryAction = viewMenu->AddAction(tr("&Resumo"));
+  QAction *indicatorAction = viewMenu->addAction(tr("&Indicadores"), this,
+      &MainWindow::showIndicators);
+//  QAction *assetsAction = viewMenu->addAction(tr("Balanço &Ativos"));
+//  QAction *liabAction = viewMenu->addAction(tr("Balanço &Passivos"));
+
   QMenu *helpMenu = menuBar()->addMenu(tr("&Ajuda"));
   QAction *aboutAction = helpMenu->addAction(tr("&Sobre"), 
       this, &MainWindow::about); 
@@ -174,6 +210,17 @@ void MainWindow::createActions()
       this, &MainWindow::help); 
   configureDatabaseAction->setStatusTip(
       tr("Ajuda"));
+
+  IndicatorView *indicatorView = new IndicatorView(cvm,anual,
+      financial_info_type,*conn,this);
+  connect ( this, SIGNAL(changedCvm(int)), indicatorView, 
+      SLOT (setCvm(int)));
+  connect ( this, SIGNAL(changedAnual(bool)), indicatorView, 
+      SLOT (setAnual(bool)));
+  connect ( this, SIGNAL(changedType(Dfp::FinancialInfoType)), 
+      indicatorView, SLOT (setType(Dfp::FinancialInfoType)));
+  mainStackedWidget->addWidget(indicatorView);
+  mainStackedWidget->show();
 }
 
 void MainWindow::createStatusBar()
@@ -196,13 +243,11 @@ void MainWindow::readSettings()
     } else {
         restoreGeometry(geometry);
     }
-    QString host = settings.value("host").toString();
+    host = settings.value("host").toString();
     if (host.isEmpty()) wizardDB();
     host = settings.value("host").toString();
-    QString password = settings.value("password").toString();
+    password = settings.value("password").toString();
       conn = std::make_shared<GenetDatabase> (host, "denet", password);
-    
-    
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

@@ -33,16 +33,32 @@ namespace Dfp {
 
 class GenetDatabase;
 
+namespace Genet 
+{
+  enum IndicatorViews : unsigned int {
+    PRICE_VIEW = 1,
+    CASH_VIEW,
+    RESULT_VIEW,
+    MISC_VIEW,
+    ASSETS_VIEW,
+    PERFORMANCE_VIEW
+  };
+}
+
 class IndicatorDelegate : public QStyledItemDelegate 
 {
   Q_OBJECT
 
   public:
 
-    IndicatorDelegate(QWidget *parent=0) : QStyledItemDelegate(parent) {}
+    IndicatorDelegate(Genet::IndicatorViews view_, QWidget *parent=0) 
+      : QStyledItemDelegate(parent), view(view_) {}
 
     void paint (QPainter *painter, const QStyleOptionViewItem &option, 
         const QModelIndex &index) const Q_DECL_OVERRIDE;
+
+  private:
+    Genet::IndicatorViews view;
 };
 
 class IndicatorView : public QWidget
@@ -50,15 +66,18 @@ class IndicatorView : public QWidget
   Q_OBJECT
 
   public:
-
   IndicatorView(int cvm_, bool anual_, Dfp::FinancialInfoType type_, 
       const GenetDatabase &conn, QWidget *parent=Q_NULLPTR);
 
-  private slots:
+  signals:
+    void changedCvm(int);
+    void changedType(Dfp::FinancialInfoType);
+    void changedAnual(bool);
 
-    void changedCvm(int cvm_);
-    void changedType(Dfp::FinancialInfoType type_);
-    void changedAnual(bool anual_);
+  private slots:
+    void setCvm(int cvm_);
+    void setAnual(bool anual_);
+    void setType(Dfp::FinancialInfoType type_);
 
   private:
 
@@ -81,7 +100,9 @@ class IndicatorView : public QWidget
   QLabel *assetsLabel;
   QLabel *miscLabel;
 
-  IndicatorDelegate *valueDelegate;
+  IndicatorDelegate *priceDelegate;
+  IndicatorDelegate *assetsDelegate;
+  IndicatorDelegate *miscDelegate;
   IndicatorPriceModel *priceModel;
   IndicatorCashModel *cashModel;
   IndicatorMiscModel *miscModel;

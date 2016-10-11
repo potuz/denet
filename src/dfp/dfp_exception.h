@@ -25,7 +25,8 @@ namespace Dfp {
   /// Possible exceptions encountered
   enum ExceptionType {
     EXCEPTION_NO_ACCT = 1,
-    EXCEPTION_NO_INTERNET
+    EXCEPTION_NO_INTERNET,
+    EXCEPTION_NO_EXERCISE
   };
   class Exception : public std::runtime_error {
     private: 

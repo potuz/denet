@@ -97,6 +97,7 @@ namespace Dfp {
   /// directly. 
   class Database 
   {
+    protected:
     const std::unique_ptr<sql::Connection> conn;
 
     public:

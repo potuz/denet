@@ -21,6 +21,7 @@
 #include <QColor>
 #include <QString>
 #include <QBrush>
+#include "dfp/dfp_exception.h"
 
 int IndicatorModel::rowCount(const QModelIndex &parent) const
 {
@@ -82,13 +83,33 @@ QVariant IndicatorModel::headerData (int section, Qt::Orientation orientation,
 }
 
 template<class T>
-void IndicatorModel::setCvm( int cvm, bool anual, 
-    Dfp::FinancialInfoType type, const QList<QPair<QString, T>> &list )
+void IndicatorModel::setDataList( int cvm_, bool anual_, 
+    Dfp::FinancialInfoType type_, const QList<QPair<QString, T>> &list )
 {
+  beginResetModel();
   ind_val_pair.clear();
+
+  try { 
+    conn.last_imported_exercise(cvm_);
+  } catch ( Dfp::Exception &e )
+  {
+    if ( e.getErrorCode() == Dfp::EXCEPTION_NO_EXERCISE ) 
+      return;
+    throw;
+  }
+  cvm = cvm_;
+  anual = anual_;
+  type = type_;
   for ( auto i = list.begin(); i !=list.end(); ++i)
+    try {
     ind_val_pair.push_back( qMakePair (i->first, 
           conn.get_indicator(cvm, i->second, anual, type) ));
+    } catch (Dfp::Exception &e ) {
+      if (e.getErrorCode() == Dfp::EXCEPTION_NO_ACCT)
+        ind_val_pair.push_back (qMakePair (i->first, 0));
+      else throw;
+    }
+  endResetModel();
 }
 
 template<class T>
@@ -97,7 +118,7 @@ IndicatorModel::IndicatorModel( int cvm_, bool anual_,
     const QList<QPair<QString, T>> &entrypair, QObject *parent_ ) 
   : cvm(cvm_), anual(anual_), type(type_), conn(conn_)
 {
-  setCvm(cvm, anual, type, entrypair);
+  setDataList(cvm, anual, type, entrypair);
 }
 
 IndicatorModel::IndicatorModel( int cvm_, bool anual_, 
@@ -110,7 +131,6 @@ const QList<QPair< QString, Dfp::Indicator>> IndicatorPriceModel::entrypair =
       {"P/EBIT:", Dfp::DFP_INDICATOR_PEBIT},
       {"PSR:", Dfp::DFP_INDICATOR_PSR},
       {"P/Ativos:", Dfp::DFP_INDICATOR_PASSET},
-      {"P/Ativ. Circ. Líq.:", Dfp::DFP_INDICATOR_PNETLIQASSET},
       {"P/Cap. Giro:", Dfp::DFP_INDICATOR_PWORKCAP},
       {"P/VP:", Dfp::DFP_INDICATOR_PVP},
       {"DY:", Dfp::DFP_INDICATOR_DY} };
@@ -120,10 +140,19 @@ IndicatorPriceModel::IndicatorPriceModel( int cvm, bool anual,
     QObject *parent) : IndicatorModel ( cvm, anual, type,
       conn, entrypair ) { }
 
-void IndicatorPriceModel::setCvm(int cvm, bool anual, 
-    Dfp::FinancialInfoType type) 
+void IndicatorPriceModel::setCvm(int cvm_)
 {
-  IndicatorModel::setCvm (cvm, anual, type, entrypair);
+  IndicatorModel::setDataList (cvm_, anual, type, entrypair);
+}
+
+void IndicatorPriceModel::setAnual(bool anual_)
+{
+  IndicatorModel::setDataList (cvm, anual_, type, entrypair);
+}
+
+void IndicatorPriceModel::setType(Dfp::FinancialInfoType type_)
+{
+  IndicatorModel::setDataList (cvm, anual, type_, entrypair);
 }
 
 const QList<QPair<QString, Dfp::Indicator>> IndicatorPerformModel::entrypair =
@@ -139,19 +168,28 @@ IndicatorPerformModel::IndicatorPerformModel( int cvm, bool anual,
     QObject *parent) : IndicatorModel ( cvm, anual, type,
       conn, entrypair ) { }
 
-void IndicatorPerformModel::setCvm(int cvm, bool anual, 
-    Dfp::FinancialInfoType type) 
+void IndicatorPerformModel::setCvm(int cvm_)
 {
-  IndicatorModel::setCvm (cvm, anual, type, entrypair);
+  IndicatorModel::setDataList (cvm_, anual, type, entrypair);
 }
+
+void IndicatorPerformModel::setAnual(bool anual_)
+{
+  IndicatorModel::setDataList (cvm, anual_, type, entrypair);
+}
+
+void IndicatorPerformModel::setType(Dfp::FinancialInfoType type_)
+{
+  IndicatorModel::setDataList (cvm, anual, type_, entrypair);
+}
+
 
 const QList<QPair<QString, QString>> IndicatorCashModel::entrypair = {
      {"Caixa Líq. Operacional:", "6.01" }, 
       {"Caixa Líq. Investimento:", "6.02"},
       {"Caixa Líq. Financiamento:", "6.03"},
-      {"Deprec. e Amortiz.:", "6.04"}, 
-      {"Variação Cambial:", "6.05"},
-      {"Variação Caixa e Equiv.:", "6.06"},
+      {"Variação Cambial:", "6.04"},
+      {"Variação Caixa e Equiv.:", "6.05"},
     };
  
 IndicatorCashModel::IndicatorCashModel( int cvm, bool anual, 
@@ -159,19 +197,29 @@ IndicatorCashModel::IndicatorCashModel( int cvm, bool anual,
     QObject *parent) : IndicatorModel ( cvm, anual, type,
       conn, entrypair ) { }
 
-void IndicatorCashModel::setCvm(int cvm, bool anual, 
-    Dfp::FinancialInfoType type) 
+void IndicatorCashModel::setCvm(int cvm_)
 {
-  IndicatorModel::setCvm (cvm, anual, type, entrypair);
+  IndicatorModel::setDataList (cvm_, anual, type, entrypair);
 }
+
+void IndicatorCashModel::setAnual(bool anual_)
+{
+  IndicatorModel::setDataList (cvm, anual_, type, entrypair);
+}
+
+void IndicatorCashModel::setType(Dfp::FinancialInfoType type_)
+{
+  IndicatorModel::setDataList (cvm, anual, type_, entrypair);
+}
+
 
 const QList<QPair<QString, QString>> IndicatorAssetsModel::entrypair = 
    { {"Ativos:", "1"}, 
-      {"Ativo Circulante:", "1.1" },
-      {"Caixa Líquida:", "1.2"},
-      {"Dívida Líquida:", "2.3"},
-      {"Dívida Bruta:", "2.2"},
-      {"Patrimônio Líq:", "2.1"},
+      {"Ativo Circulante:", "1.01" },
+      {"Caixa Líquida:", "1.02"},
+      {"Dívida CP:", "2.01.04"},
+      {"Dívida LP:", "2.02.01"},
+      {"Patrimônio Líq:", "2.03"},
     };
  
 IndicatorAssetsModel::IndicatorAssetsModel( int cvm, bool anual, 
@@ -179,11 +227,21 @@ IndicatorAssetsModel::IndicatorAssetsModel( int cvm, bool anual,
     QObject *parent) : IndicatorModel ( cvm, anual, type,
       conn, entrypair ) { }
 
-void IndicatorAssetsModel::setCvm(int cvm, bool anual, 
-    Dfp::FinancialInfoType type) 
+void IndicatorAssetsModel::setCvm(int cvm_)
 {
-  IndicatorModel::setCvm (cvm, anual, type, entrypair);
+  IndicatorModel::setDataList (cvm_, anual, type, entrypair);
 }
+
+void IndicatorAssetsModel::setAnual(bool anual_)
+{
+  IndicatorModel::setDataList (cvm, anual_, type, entrypair);
+}
+
+void IndicatorAssetsModel::setType(Dfp::FinancialInfoType type_)
+{
+  IndicatorModel::setDataList (cvm, anual, type_, entrypair);
+}
+
 
 const QList<QPair<QString, Dfp::Indicator>> IndicatorMiscModel::entrypair = {
      {"Valor de Mercado:", Dfp::DFP_INDICATOR_MV }, 
@@ -198,11 +256,21 @@ IndicatorMiscModel::IndicatorMiscModel( int cvm, bool anual,
     QObject *parent) : IndicatorModel ( cvm, anual, type,
       conn, entrypair ) { }
 
-void IndicatorMiscModel::setCvm(int cvm, bool anual, 
-    Dfp::FinancialInfoType type) 
+void IndicatorMiscModel::setCvm(int cvm_)
 {
-  IndicatorModel::setCvm (cvm, anual, type, entrypair);
+  IndicatorModel::setDataList (cvm_, anual, type, entrypair);
 }
+
+void IndicatorMiscModel::setAnual(bool anual_)
+{
+  IndicatorModel::setDataList (cvm, anual_, type, entrypair);
+}
+
+void IndicatorMiscModel::setType(Dfp::FinancialInfoType type_)
+{
+  IndicatorModel::setDataList (cvm, anual, type_, entrypair);
+}
+
 
 const QList<QPair<QString, QString>> IndicatorResultModel::entrypair = {
     {"Receita Líquida:", "3.01"}, 
@@ -217,21 +285,62 @@ IndicatorResultModel::IndicatorResultModel( int cvm_, bool anual_,
     Dfp::FinancialInfoType type_, const GenetDatabase &conn_, QObject 
     *parent) : IndicatorModel (cvm_, anual_,type_, conn_)
 {
-  setCvm(cvm, anual, type);
+  setDataList(cvm, anual, type);
 }
 
 
-void IndicatorResultModel::setCvm(int cvm, bool anual, 
+void IndicatorResultModel::setDataList(int cvm, bool anual, 
     Dfp::FinancialInfoType type) 
 {
+  beginResetModel();
   ind_val_pair.clear();
+
+  try { 
+    conn.last_imported_exercise(cvm);
+  } catch ( Dfp::Exception &e )
+  {
+    if ( e.getErrorCode() == Dfp::EXCEPTION_NO_EXERCISE ) 
+      return;
+    throw;
+  }
+  
   int i;    
   for (i = 0; i < 3; ++i)
+    try {
     ind_val_pair.push_back( qMakePair (entrypair.at(i).first, 
      conn.get_indicator(cvm, entrypair.at(i).second, false, type)));
+    } catch (Dfp::Exception &e ) {
+      if (e.getErrorCode() == Dfp::EXCEPTION_NO_ACCT)
+        ind_val_pair.push_back (qMakePair (entrypair.at(i).first, 0));
+      else throw;
+    }
   for (i = 0; i < 3; ++i)
-    ind_val_pair.push_back( qMakePair (entrypair.at(i).first, 
+    try {
+    ind_val_pair.push_back( qMakePair (entrypair.at(i+3).first, 
           conn.get_indicator(cvm, entrypair.at(i).second, true, type)));
+    } catch (Dfp::Exception &e ) {
+      if (e.getErrorCode() == Dfp::EXCEPTION_NO_ACCT)
+        ind_val_pair.push_back (qMakePair (entrypair.at(i+3).first, 0));
+      else throw;
+    }
+  endResetModel();
 }
 
+void IndicatorResultModel::setCvm (int cvm_)
+{
+  cvm = cvm_;
+  setDataList (cvm, anual, type);
+}
+
+void IndicatorResultModel::setAnual (bool anual_)
+{
+  anual = anual_;
+  setDataList (cvm, anual, type);
+}
+
+void IndicatorResultModel::setType (Dfp::FinancialInfoType type_)
+{
+  type = type_;
+  setDataList (cvm, anual, type);
+}
 

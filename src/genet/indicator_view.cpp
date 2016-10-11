@@ -18,31 +18,61 @@
  */
 #include "indicator_view.h"
 #include <QtWidgets>
+#include "genet_database.h"
+#include "dfp/dfp_exception.h"
 
 void IndicatorDelegate::paint (QPainter *painter, 
     const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-  if ( index.column()== 1 ) 
+  QStyleOptionViewItem option2 = option;
+  if (index.data(Qt::ForegroundRole).canConvert<QBrush>()) 
+    option2.palette.setBrush(QPalette::WindowText, 
+                      qvariant_cast<QBrush>(index.data(Qt::ForegroundRole)));
+  if ( index.column()== 0 ) 
   {
     QString label = index.data().toString();
 
     QApplication::style()->drawItemText( painter, option.rect, 
-        Qt::AlignLeft, option.palette, true, label );
+        Qt::AlignLeft, option2.palette, true, label, QPalette::WindowText );
   }
-  else if ( index.column() == 2 ) 
+  else if ( index.column() == 1 ) 
   {
+    QLocale::setDefault (QLocale (QLocale::Portuguese, QLocale::Brazil));
     QStyleOptionFrame lineEditOption;
     lineEditOption.rect = option.rect;
-    lineEditOption.lineWidth = 2;
-    lineEditOption.midLineWidth = 1;
+    lineEditOption.lineWidth = 4;
+    lineEditOption.midLineWidth = 2;
     lineEditOption.state = QStyle::State_Sunken;
     
     QApplication::style()->drawPrimitive(QStyle::PE_FrameLineEdit, 
         &lineEditOption, painter);
 
-    QString value = index.data().toString();
+    QString value;
+
+    switch (view) {
+      case Genet::PRICE_VIEW:
+      case Genet::PERFORMANCE_VIEW:
+        {
+          double ret = index.data().toDouble();
+          ret = ret * 100;
+          value = QString("%L1\%").arg(ret,0, 'f', 2);
+        }
+        break;
+      case Genet::MISC_VIEW:
+        {
+          double ret = index.data().toDouble();
+          value = QString("%L1").arg(ret,0, 'f', 2);
+        }
+        break;
+      default:
+        {
+          int ret = index.data().toInt();
+          value = QString("%L1").arg(ret);
+        }
+        break;
+    }
     QApplication::style()->drawItemText( painter, option.rect, 
-        Qt::AlignRight, option.palette, true, value );
+        Qt::AlignRight, option2.palette, true, value, QPalette::WindowText ); 
   }
   else 
     QStyledItemDelegate::paint(painter, option, index);
@@ -53,64 +83,136 @@ IndicatorView::IndicatorView(int cvm_, bool anual_,
     QWidget *parent) :
   cvm (cvm_), anual(anual_), type(type_), conn(conn_)
 {
+  priceDelegate = new IndicatorDelegate(Genet::PRICE_VIEW, this);
+  miscDelegate = new IndicatorDelegate(Genet::MISC_VIEW, this);
+  assetsDelegate = new IndicatorDelegate(Genet::ASSETS_VIEW, this);
+  
+  setStyleSheet("QTableView {background-color: transparent}");
 
-  valueDelegate = new IndicatorDelegate(this);
-
-  priceLabel = new QLabel(tr("Indicadores de Preço"));
+  priceLabel = new QLabel(tr("<b>Indicadores de Preço</b>"));
+  priceLabel->setAlignment(Qt::AlignCenter);
   priceView = new QTableView;
   priceModel = new IndicatorPriceModel (cvm, anual, type, conn);
+  connect (this, SIGNAL(changedCvm(int)), priceModel, SLOT (setCvm(int)));
+  connect (this, SIGNAL(changedAnual(bool)), priceModel, 
+      SLOT (setAnual(bool)));
+  connect (this, SIGNAL(changedType(Dfp::FinancialInfoType)), 
+      priceModel, SLOT (setType(Dfp::FinancialInfoType)));
   priceView->setModel(priceModel);
-  priceView->setItemDelegate(valueDelegate);
+  priceView->setItemDelegate(priceDelegate);
+  priceView->setShowGrid(false);
+  priceView->horizontalHeader()->setSectionResizeMode(0,QHeaderView::Stretch);
+  priceView->horizontalHeader()->hide();
 
-  performanceLabel = new QLabel(tr("Indicadores de Rendimento"));
+  performanceLabel = new QLabel(tr("<b>Indicadores de Rendimento</b>"));
+  performanceLabel->setAlignment(Qt::AlignCenter);
   performanceView = new QTableView;
   performanceModel = new IndicatorPerformModel (cvm, anual, type, conn);
+  connect (this, SIGNAL(changedCvm(int)), performanceModel, 
+      SLOT (setCvm(int)));
+  connect (this, SIGNAL(changedAnual(bool)), performanceModel, 
+      SLOT (setAnual(bool)));
+  connect (this, SIGNAL(changedType(Dfp::FinancialInfoType)), 
+      performanceModel, SLOT (setType(Dfp::FinancialInfoType)));
   performanceView->setModel(performanceModel);
-  performanceView->setItemDelegate(valueDelegate);
+  performanceView->setItemDelegate(priceDelegate);
+  performanceView->setShowGrid(false);
+  performanceView->horizontalHeader()->setSectionResizeMode(0,
+      QHeaderView::Stretch);
+  performanceView->horizontalHeader()->hide();
 
-  assetsLabel = new QLabel(tr("Indicadores de Patrimônio"));
+  assetsLabel = new QLabel(tr("<b>Indicadores de Patrimônio</b>"));
+  assetsLabel->setAlignment(Qt::AlignCenter);
   assetsView = new QTableView;
   assetsModel = new IndicatorAssetsModel(cvm, anual, type, conn);
+  connect (this, SIGNAL(changedCvm(int)), assetsModel, SLOT (setCvm(int)));
+  connect (this, SIGNAL(changedAnual(bool)), assetsModel, 
+      SLOT (setAnual(bool)));
+  connect (this, SIGNAL(changedType(Dfp::FinancialInfoType)), 
+      assetsModel, SLOT (setType(Dfp::FinancialInfoType)));
   assetsView->setModel(assetsModel);
-  assetsView->setItemDelegate(valueDelegate);
+  assetsView->setItemDelegate(assetsDelegate);
+  assetsView->setShowGrid(false);
+  assetsView->horizontalHeader()->setSectionResizeMode(0,QHeaderView::Stretch);
+  assetsView->horizontalHeader()->hide();
 
-  miscLabel = new QLabel(tr("Indicadores Variados"));
+  miscLabel = new QLabel(tr("<b>Indicadores Variados</b>"));
+  miscLabel->setAlignment(Qt::AlignCenter);
   miscView = new QTableView;
   miscModel = new IndicatorMiscModel(cvm, anual, type, conn);
+  connect (this, SIGNAL(changedCvm(int)), miscModel, SLOT (setCvm(int)));
+  connect (this, SIGNAL(changedAnual(bool)), miscModel, 
+      SLOT (setAnual(bool)));
+  connect (this, SIGNAL(changedType(Dfp::FinancialInfoType)), 
+      miscModel, SLOT (setType(Dfp::FinancialInfoType)));
   miscView->setModel(miscModel);
-  miscView->setItemDelegate(valueDelegate);
+  miscView->setItemDelegate(miscDelegate);
+  miscView->setShowGrid(false);
+  miscView->horizontalHeader()->setSectionResizeMode(0,QHeaderView::Stretch);
+  miscView->horizontalHeader()->hide();
 
-  resultLabel = new QLabel(tr("Indicadores de Resultado"));
+  resultLabel = new QLabel(tr("<b>Indicadores de Resultado</b>"));
+  resultLabel->setAlignment(Qt::AlignCenter);
   resultView = new QTableView;
   resultModel = new IndicatorResultModel(cvm, anual, type, conn);
+  connect (this, SIGNAL(changedCvm(int)), resultModel, SLOT (setCvm(int)));
+  connect (this, SIGNAL(changedAnual(bool)), resultModel, 
+      SLOT (setAnual(bool)));
+  connect (this, SIGNAL(changedType(Dfp::FinancialInfoType)), 
+      resultModel, SLOT (setType(Dfp::FinancialInfoType)));
   resultView->setModel(resultModel);
-  resultView->setItemDelegate(valueDelegate);
+  resultView->setItemDelegate(assetsDelegate);
+  resultView->setShowGrid(false);
+  resultView->horizontalHeader()->setSectionResizeMode(0,QHeaderView::Stretch);
+  resultView->horizontalHeader()->hide();
 
-  cashLabel = new QLabel(tr("Indicadores de Caixa"));
+  cashLabel = new QLabel(tr("<b>Indicadores de Caixa</b>"));
+  cashLabel->setAlignment(Qt::AlignCenter);
   cashView = new QTableView;
   cashModel = new IndicatorCashModel(cvm, anual, type, conn);
+  connect (this, SIGNAL(changedCvm(int)), cashModel, SLOT (setCvm(int)));
+  connect (this, SIGNAL(changedAnual(bool)), cashModel, 
+      SLOT (setAnual(bool)));
+  connect (this, SIGNAL(changedType(Dfp::FinancialInfoType)), 
+      cashModel, SLOT (setType(Dfp::FinancialInfoType)));
   cashView->setModel(cashModel);
-  cashView->setItemDelegate(valueDelegate);
+  cashView->setItemDelegate(assetsDelegate);
+  cashView->setShowGrid(false);
+  cashView->horizontalHeader()->setSectionResizeMode(0,QHeaderView::Stretch);
+  cashView->horizontalHeader()->hide();
 
   QGridLayout *layout = new QGridLayout;
   layout->addWidget(priceLabel, 0,0);
-  layout->addWidget(performanceLabel, 0,1);
+  layout->addWidget(performanceLabel, 2,0);
   layout->addWidget(priceView, 1,0);
-  layout->addWidget(performanceView, 1,1);
-  layout->addWidget(assetsLabel, 2,0);
+  layout->addWidget(performanceView, 3,0);
+  layout->addWidget(assetsLabel, 0,2);
   layout->addWidget(cashLabel, 2,1);
-  layout->addWidget(assetsView, 3,0);
+  layout->addWidget(assetsView, 1,2);
   layout->addWidget(cashView, 3,1);
-  layout->addWidget(resultLabel, 4,0);
-  layout->addWidget(miscLabel, 4,1);
-  layout->addWidget(resultView, 5,0);
-  layout->addWidget(miscView, 5,1);
+  layout->addWidget(resultLabel, 0,1);
+  layout->addWidget(miscLabel, 2,2);
+  layout->addWidget(resultView, 1,1);
+  layout->addWidget(miscView, 3,2);
   setLayout(layout);
 }
 
-void IndicatorView::changedCvm(int cvm_) {}
-    
-void IndicatorView::changedType(Dfp::FinancialInfoType type_) {}
+void IndicatorView::setCvm(int cvm_) 
+{
+  cvm = cvm_;
+  emit changedCvm(cvm);
+}
 
-void IndicatorView::changedAnual(bool anual_) {}
+void IndicatorView::setAnual(bool anual_)
+{
+  anual = anual_;
+  emit changedAnual(anual);
+}
+
+void IndicatorView::setType(Dfp::FinancialInfoType type_) 
+{
+  type = type_;
+  emit changedType(type);
+}
+
 

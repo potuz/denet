@@ -27,16 +27,20 @@ class QStackedWidget;
 QT_END_NAMESPACE
 
 namespace Dfp { 
-  class Company;
-  class Database;
   enum FinancialInfoType : unsigned int;
 }
 
+class GenetDatabase;
 class MainWindow : public QMainWindow
 {
   Q_OBJECT
   public:
     MainWindow();
+
+  signals:
+    void changedCvm(int);
+    void changedAnual(bool);
+    void changedType(Dfp::FinancialInfoType);
 
   private slots:
     void import();
@@ -48,6 +52,8 @@ class MainWindow : public QMainWindow
     void wizardDB();
     void about();
     void help();
+    void showIndicators();
+
 
   protected:
     void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
@@ -59,11 +65,14 @@ class MainWindow : public QMainWindow
     void readSettings();
     void writeSettings();
 
-    QStackedWidget *mainstackedwidget;
-    Dfp::Company *company;
-    std::shared_ptr<Dfp::Database> conn;
+    QStackedWidget *mainStackedWidget;
+    std::shared_ptr<GenetDatabase> conn;
+    int cvm;
+    bool anual;
     Dfp::FinancialInfoType financial_info_type;
-    bool anual{true};
+
+    QString host;
+    QString password;
 };
 
 #endif

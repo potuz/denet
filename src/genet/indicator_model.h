@@ -55,13 +55,18 @@ class IndicatorModel : public QAbstractTableModel
 
   protected:
     template<class T>
-    void setCvm( int cvm_, bool anual_, Dfp::FinancialInfoType type_, 
+    void setDataList( int cvm_, bool anual_, Dfp::FinancialInfoType type_, 
         const QList<QPair<QString, T>> &list );
     int cvm;
     bool anual;
     Dfp::FinancialInfoType type;
     const GenetDatabase &conn;
     QList<QPair<QString, QVariant>> ind_val_pair;
+
+  private slots:
+    virtual void setCvm(int) = 0;
+    virtual void setAnual(bool) = 0;
+    virtual void setType(Dfp::FinancialInfoType) = 0;
 };
 
 class IndicatorPriceModel : public IndicatorModel
@@ -72,10 +77,15 @@ class IndicatorPriceModel : public IndicatorModel
     IndicatorPriceModel(int cvm, bool anual, Dfp::FinancialInfoType type, 
         const GenetDatabase &conn, QObject *parent = 0);
 
-    void setCvm(int cvm, bool anual, Dfp::FinancialInfoType type);
+    void setDataList(int cvm, bool anual, Dfp::FinancialInfoType type);
 
   private:
    static const QList<QPair<QString, Dfp::Indicator>> entrypair;
+
+  private slots:
+    void setCvm(int);
+    void setType(Dfp::FinancialInfoType);
+    void setAnual(bool);
 };
 
 class IndicatorPerformModel : public IndicatorModel
@@ -86,11 +96,15 @@ class IndicatorPerformModel : public IndicatorModel
     IndicatorPerformModel(int cvm, bool anual, Dfp::FinancialInfoType type, 
         const GenetDatabase &conn, QObject *parent = 0);
 
-    void setCvm(int cvm, bool anual, Dfp::FinancialInfoType type);
+    void setDataList(int cvm, bool anual, Dfp::FinancialInfoType type);
 
   private:
     static const QList<QPair<QString, Dfp::Indicator>> entrypair;
 
+  private slots:
+    void setCvm(int);
+    void setType(Dfp::FinancialInfoType);
+    void setAnual(bool);
 };
 
 class IndicatorAssetsModel : public IndicatorModel
@@ -101,10 +115,15 @@ class IndicatorAssetsModel : public IndicatorModel
     IndicatorAssetsModel(int cvm, bool anual, Dfp::FinancialInfoType type, 
         const GenetDatabase &conn, QObject *parent = 0);
 
-    void setCvm(int cvm, bool anual, Dfp::FinancialInfoType type);
+    void setDataList(int cvm, bool anual, Dfp::FinancialInfoType type);
 
   private:
     static const QList<QPair<QString, QString>> entrypair;
+
+  private slots:
+    void setCvm(int);
+    void setType(Dfp::FinancialInfoType);
+    void setAnual(bool);
 };
 
 class IndicatorMiscModel : public IndicatorModel
@@ -115,10 +134,15 @@ class IndicatorMiscModel : public IndicatorModel
     IndicatorMiscModel(int cvm, bool anual, Dfp::FinancialInfoType type, 
         const GenetDatabase &conn, QObject *parent = 0);
 
-    void setCvm(int cvm, bool anual, Dfp::FinancialInfoType type);
+    void setDataList(int cvm, bool anual, Dfp::FinancialInfoType type);
 
   private:
     static const QList<QPair<QString, Dfp::Indicator>> entrypair;
+
+  private slots:
+    void setCvm(int);
+    void setType(Dfp::FinancialInfoType);
+    void setAnual(bool);
 };
 
 class IndicatorCashModel : public IndicatorModel
@@ -129,11 +153,15 @@ class IndicatorCashModel : public IndicatorModel
     IndicatorCashModel(int cvm, bool anual, Dfp::FinancialInfoType type, 
         const GenetDatabase &conn, QObject *parent = 0);
 
-    void setCvm(int cvm, bool anual, Dfp::FinancialInfoType type);
+    void setDataList(int cvm, bool anual, Dfp::FinancialInfoType type);
 
   private:
     static const QList<QPair<QString, QString>> entrypair;
 
+  private slots:
+    void setCvm(int);
+    void setType(Dfp::FinancialInfoType);
+    void setAnual(bool);
 };
 
 class IndicatorResultModel : public IndicatorModel
@@ -144,10 +172,15 @@ class IndicatorResultModel : public IndicatorModel
     IndicatorResultModel(int cvm, bool anual, Dfp::FinancialInfoType type, 
         const GenetDatabase &conn, QObject *parent = 0);
 
-    void setCvm(int cvm, bool anual, Dfp::FinancialInfoType type);
+    void setDataList(int cvm, bool anual, Dfp::FinancialInfoType type);
 
   private:
     static const QList<QPair<QString, QString>> entrypair;
+
+  private slots:
+    void setCvm(int);
+    void setType(Dfp::FinancialInfoType);
+    void setAnual(bool);
 };
 
 #endif
