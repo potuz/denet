@@ -21,6 +21,7 @@
 ///\file
 #include <QMainWindow>
 #include <memory> //shared_ptr
+#include "genet_database.h"
 
 QT_BEGIN_NAMESPACE
 class QStackedWidget;
@@ -31,7 +32,6 @@ namespace Dfp {
 }
 
 namespace Genet { 
-class GenetDatabase;
 class MainWindow : public QMainWindow
 {
   Q_OBJECT
@@ -67,7 +67,7 @@ class MainWindow : public QMainWindow
     void writeSettings();
 
     QStackedWidget *mainStackedWidget;
-    std::shared_ptr<GenetDatabase> conn;
+    std::unique_ptr<GenetDatabase> conn;
     int cvm;
     bool anual;
     Dfp::FinancialInfoType financial_info_type;

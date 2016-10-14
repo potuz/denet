@@ -250,9 +250,33 @@ void MainWindow::readSettings()
     }
     host = settings.value("host").toString();
     if (host.isEmpty()) wizardDB();
-    host = settings.value("host").toString();
-    password = settings.value("password").toString();
-      conn = std::make_shared<GenetDatabase> (host, "denet", password);
+    while (!conn) {
+      host = settings.value("host").toString();
+      password = settings.value("password").toString();
+      try {
+        conn = std::make_unique<GenetDatabase> (host, "denet", password);
+      } catch ( sql::SQLException &e )
+      {
+        switch ( e.getErrorCode() ) {
+          case 1045: 
+            {
+              auto printable = QStringLiteral ( "<p>A senha guardada para "
+                  "a base de dados é incorreta. Talvez você mudou a senha "
+                  "utilizando outro programa?.</p>"
+                  "<p>Intente configurando a base de dados novamente"
+                  ". O erro reportado pelo "
+                  "servidor é:</p>%1").arg(e.what());
+              QMessageBox::critical (this, tr("mensagem critica"), printable, 
+                  QMessageBox::Ok);
+              wizardDB();
+            }
+            break;
+          default: throw;
+                   break;
+
+        } 
+      }
+    }
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

@@ -74,6 +74,16 @@ namespace Genet {
             }
           }
           break;
+        case 1141: 
+          {
+            auto printable = QStringLiteral ( "<p>A base de dados existe "
+                "mas o usuario administrador não existe com esse domínio, "
+                "verifique o valor do servidor. O erro reportado pelo "
+                "servidor é:</p>%1").arg(e.what());
+            QMessageBox::critical (this, tr("mensagem critica"), printable, 
+                QMessageBox::Ok);
+          }
+          break;
         default:
           throw;
           break;

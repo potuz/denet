@@ -4,15 +4,11 @@ src/download-test.cpp
 src/htmltest.cpp
 src/tags
 src/working-dfp-cvm.cpp
-00538020160630301.zip
-01159220160630301.zip
 build
 cmake
 data/companies-complete.csv
 data/companies.sql
 debug-build
-dbase.sql
 docs
 Makefile
-
-
+src/header.txt
