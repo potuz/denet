@@ -18,7 +18,7 @@
  */
 #ifndef MAINWINDOW_INCLUDED
 #define MAINWINDOW_INCLUDED
-
+///\file
 #include <QMainWindow>
 #include <memory> //shared_ptr
 
@@ -30,6 +30,7 @@ namespace Dfp {
   enum FinancialInfoType : unsigned int;
 }
 
+namespace Genet { 
 class GenetDatabase;
 class MainWindow : public QMainWindow
 {
@@ -74,6 +75,6 @@ class MainWindow : public QMainWindow
     QString host;
     QString password;
 };
-
+}
 #endif
 

@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationName("genet");
     QCoreApplication::setApplicationVersion(PROJECT_VERSION_COMPLETE);
 
-    MainWindow mainWin;
+    Genet::MainWindow mainWin;
     mainWin.show();
     return app.exec();
 }

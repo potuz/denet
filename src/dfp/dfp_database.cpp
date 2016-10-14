@@ -487,7 +487,7 @@ std::vector<Dfp::CvmUrl> Dfp::Database::available_for_download (int cvm,
                  "Dfp::Database::available_for_download: invalid CvmFileType" ); 
              break;
   }
-  for ( auto it = cvmurl.begin(); it != cvmurl.end(); ++it) {
+  for ( auto it = cvmurl.begin(); it != cvmurl.end();) {
     //TODO: use iomanip get_time when available c++17
     //TODO: this fails for fre
     std::tm tm;
@@ -502,11 +502,16 @@ std::vector<Dfp::CvmUrl> Dfp::Database::available_for_download (int cvm,
     tm.tm_hour = 0;
     tm.tm_min = 0;
     tm.tm_sec = 0;
-    //debug_log ( "Database::available_for_download Revision" + 
-    //    std::to_string (it->revision ) + 
-    //    " last imported: " + std::to_string( last_imported_revision(cvm,tm) ));
+    debug_log ( "Database::available_for_download Revision: " + 
+        std::to_string (it->revision ) + 
+        " last imported: " + 
+        std::to_string( last_imported_revision(cvm,tm) ) +
+        " date: "+ 
+        it->date_str + "\n");
     if ( it->revision <= last_imported_revision (cvm, tm ) ) 
-      cvmurl.erase (it); 
+      it = cvmurl.erase (it); 
+    else
+      ++it;
   }
   return cvmurl;
 };

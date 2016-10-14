@@ -215,11 +215,11 @@ Dfp::CvmFile::CvmFile (const std::string& name) {
 
   filename = name;
 }
-void Dfp::CvmFile::import (const std::shared_ptr<Dfp::Database> conn) { 
+void Dfp::CvmFile::import (const Dfp::Database &conn) { 
   Dfp::DatabaseAccount acct; 
 
   if ( type != DFP_CVM_FILE_DFP && type != DFP_CVM_FILE_ITR ) return;
-  Dfp::Company company = conn->get_company_from_cvm (cvm); 
+  Dfp::Company company = conn.get_company_from_cvm (cvm); 
   int last_revision =  company.last_imported_revision (exercise);
   if ( revision <= last_revision ) return;
   if ( last_revision > 0 ) {
@@ -265,7 +265,7 @@ void Dfp::CvmFile::import (const std::shared_ptr<Dfp::Database> conn) {
       res = curl_easy_perform(curl);
       if(res != CURLE_OK) 
         throw Dfp::Exception ( curl_easy_strerror(res), EXCEPTION_NO_INTERNET);
-      conn->import_account ( cvm, acct ); 
+      conn.import_account ( cvm, acct ); 
     } 
     curl_easy_cleanup(curl);
   }
@@ -314,7 +314,7 @@ void Dfp::CvmFile::import (const std::shared_ptr<Dfp::Database> conn) {
     acct.name = share_number_string[i];
     acct.comments = "";
     acct.date = date_str;
-    conn->import_account (cvm, acct);
+    conn.import_account (cvm, acct);
   }
   xmlfilename = temporary_path + needed_files[2]; // InfoFinaDFin
   if (!xmldoc.load_file ( xmlfilename.c_str() )) throw std::runtime_error (
@@ -341,32 +341,32 @@ void Dfp::CvmFile::import (const std::shared_ptr<Dfp::Database> conn) {
                                acct.comments = "Capital social integralizado";
                                acct.value = std::stoi ( 
                                    info_node.child_value ( "ValorConta1" ) );
-                               conn->import_account ( cvm, acct );
+                               conn.import_account ( cvm, acct );
                                acct.comments = "Reservas de capital";  
                                acct.value = std::stoi ( 
                                    info_node.child_value ( "ValorConta2" ) );
                                acct.value = (int) acct.value / money_scale;
-                               conn->import_account ( cvm, acct );
+                               conn.import_account ( cvm, acct );
                                acct.comments = "Reservas de lucro";  
                                acct.value = std::stoi ( 
                                    info_node.child_value ( "ValorConta3" ) );
                                acct.value = (int) acct.value / money_scale;
-                               conn->import_account ( cvm, acct );
+                               conn.import_account ( cvm, acct );
                                acct.comments = "Lucros/Prejuízos acumulados";  
                                acct.value = std::stoi ( 
                                    info_node.child_value ( "ValorConta4" ) );
                                acct.value = (int) acct.value / money_scale;
-                               conn->import_account ( cvm, acct );
+                               conn.import_account ( cvm, acct );
                                acct.comments = "Outros resultados abrangentes";  
                                acct.value = std::stoi ( 
                                    info_node.child_value ( "ValorConta5" ) );
                                acct.value = (int) acct.value / money_scale;
-                               conn->import_account ( cvm, acct );
+                               conn.import_account ( cvm, acct );
                                acct.comments = "Patrimônio Líquido";  
                                acct.value = std::stoi ( 
                                    info_node.child_value ( "ValorConta6" ) );
                                acct.value = (int) acct.value / money_scale;
-                               conn->import_account ( cvm, acct );
+                               conn.import_account ( cvm, acct );
                                break; }
       default:
                              acct.comments = "";
@@ -374,7 +374,7 @@ void Dfp::CvmFile::import (const std::shared_ptr<Dfp::Database> conn) {
                                case DFP_CVM_FILE_DFP:
                                  acct.value = std::stoi ( info_node.child_value ("ValorConta1") );
                                  acct.value = (int) acct.value / money_scale;
-                                 conn->import_account ( cvm, acct );
+                                 conn.import_account ( cvm, acct );
                                  break;
                                case DFP_CVM_FILE_ITR:
                                  switch ( acct.balance_type ) {
@@ -404,7 +404,7 @@ void Dfp::CvmFile::import (const std::shared_ptr<Dfp::Database> conn) {
                                      }
                                      break;
                                  }
-                                 conn->import_account ( cvm, acct );
+                                 conn.import_account ( cvm, acct );
                                  break;
                                default:
                                  break;

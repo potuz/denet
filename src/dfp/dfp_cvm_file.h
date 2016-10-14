@@ -70,7 +70,7 @@ namespace Dfp {
     /// @param[in] conn The Dfp::Database with an open connection. The file
     ///  holds a reference to this Database even after the Dfp::Database 
     ///  object has been deleted. 
-    void import ( const std::shared_ptr<Dfp::Database> conn );
+    void import ( const Dfp::Database &conn );
 
     int get_cvm () { return cvm; };
     CvmFileType get_file_type () { return type; };

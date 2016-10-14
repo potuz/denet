@@ -25,7 +25,9 @@
 #include "database_wizard.h"
 #include "genet_database.h"
 #include "indicator_view.h"
+#include "import_view.h"
 
+namespace Genet { 
 MainWindow::MainWindow() : 
   mainStackedWidget ( new QStackedWidget ),
   anual(true), 
@@ -41,6 +43,9 @@ MainWindow::MainWindow() :
 
 void MainWindow::import() 
 {
+  ImportView *view = new ImportView(cvm, *conn);
+  view->setAttribute(Qt::WA_DeleteOnClose);
+  view->exec();
 }
 
 void MainWindow::download()
@@ -255,4 +260,5 @@ void MainWindow::closeEvent(QCloseEvent *event)
     QSettings settings(QCoreApplication::organizationName(), 
         QCoreApplication::applicationName());
     settings.setValue("geometry", saveGeometry());
+}
 }

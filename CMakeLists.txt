@@ -83,6 +83,9 @@ add_executable ( genet
   src/genet/genet_database.cpp
   src/genet/indicator_model.cpp
   src/genet/indicator_view.cpp
+  src/genet/import_model.cpp
+  src/genet/import_view.cpp
+  src/genet/import_item.cpp
   )
 
 target_link_libraries ( genet Qt5::Widgets dfp Qt5::Sql)

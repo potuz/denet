@@ -18,6 +18,7 @@
  */
 #ifndef INDICATOR_VIEW_INCLUDED
 #define INDICATOR_VIEW_INCLUDED
+///\file
 #include <QtCore>
 #include <QStyledItemDelegate>
 #include "indicator_model.h"
@@ -31,83 +32,85 @@ namespace Dfp {
   enum FinancialInfoType : unsigned int;
 }
 
-class GenetDatabase;
+namespace Genet { 
+  class GenetDatabase;
 
-namespace Genet 
-{
-  enum IndicatorViews : unsigned int {
-    PRICE_VIEW = 1,
-    CASH_VIEW,
-    RESULT_VIEW,
-    MISC_VIEW,
-    ASSETS_VIEW,
-    PERFORMANCE_VIEW
+  namespace Genet 
+  {
+    enum IndicatorViews : unsigned int {
+      PRICE_VIEW = 1,
+      CASH_VIEW,
+      RESULT_VIEW,
+      MISC_VIEW,
+      ASSETS_VIEW,
+      PERFORMANCE_VIEW
+    };
+  }
+
+  class IndicatorDelegate : public QStyledItemDelegate 
+  {
+    Q_OBJECT
+
+    public:
+
+      IndicatorDelegate(Genet::IndicatorViews view_, QWidget *parent=0) 
+        : QStyledItemDelegate(parent), view(view_) {}
+
+      void paint (QPainter *painter, const QStyleOptionViewItem &option, 
+          const QModelIndex &index) const Q_DECL_OVERRIDE;
+
+    private:
+      Genet::IndicatorViews view;
+  };
+
+  class IndicatorView : public QWidget
+  {
+    Q_OBJECT
+
+    public:
+      IndicatorView(int cvm_, bool anual_, Dfp::FinancialInfoType type_, 
+          const GenetDatabase &conn, QWidget *parent=Q_NULLPTR);
+
+signals:
+      void changedCvm(int);
+      void changedType(Dfp::FinancialInfoType);
+      void changedAnual(bool);
+
+      private slots:
+        void setCvm(int cvm_);
+      void setAnual(bool anual_);
+      void setType(Dfp::FinancialInfoType type_);
+
+    private:
+
+      int cvm;
+      bool anual;
+      Dfp::FinancialInfoType type;
+      const GenetDatabase &conn;
+
+      QTableView *priceView;
+      QTableView *cashView;
+      QTableView *performanceView;
+      QTableView *assetsView;
+      QTableView *resultView;
+      QTableView *miscView;
+
+      QLabel *priceLabel;
+      QLabel *cashLabel;
+      QLabel *performanceLabel;
+      QLabel *resultLabel;
+      QLabel *assetsLabel;
+      QLabel *miscLabel;
+
+      IndicatorDelegate *priceDelegate;
+      IndicatorDelegate *assetsDelegate;
+      IndicatorDelegate *miscDelegate;
+      IndicatorPriceModel *priceModel;
+      IndicatorCashModel *cashModel;
+      IndicatorMiscModel *miscModel;
+      IndicatorResultModel *resultModel;
+      IndicatorAssetsModel *assetsModel;
+      IndicatorPerformModel *performanceModel;
   };
 }
-
-class IndicatorDelegate : public QStyledItemDelegate 
-{
-  Q_OBJECT
-
-  public:
-
-    IndicatorDelegate(Genet::IndicatorViews view_, QWidget *parent=0) 
-      : QStyledItemDelegate(parent), view(view_) {}
-
-    void paint (QPainter *painter, const QStyleOptionViewItem &option, 
-        const QModelIndex &index) const Q_DECL_OVERRIDE;
-
-  private:
-    Genet::IndicatorViews view;
-};
-
-class IndicatorView : public QWidget
-{
-  Q_OBJECT
-
-  public:
-  IndicatorView(int cvm_, bool anual_, Dfp::FinancialInfoType type_, 
-      const GenetDatabase &conn, QWidget *parent=Q_NULLPTR);
-
-  signals:
-    void changedCvm(int);
-    void changedType(Dfp::FinancialInfoType);
-    void changedAnual(bool);
-
-  private slots:
-    void setCvm(int cvm_);
-    void setAnual(bool anual_);
-    void setType(Dfp::FinancialInfoType type_);
-
-  private:
-
-  int cvm;
-  bool anual;
-  Dfp::FinancialInfoType type;
-  const GenetDatabase &conn;
-
-  QTableView *priceView;
-  QTableView *cashView;
-  QTableView *performanceView;
-  QTableView *assetsView;
-  QTableView *resultView;
-  QTableView *miscView;
-
-  QLabel *priceLabel;
-  QLabel *cashLabel;
-  QLabel *performanceLabel;
-  QLabel *resultLabel;
-  QLabel *assetsLabel;
-  QLabel *miscLabel;
-
-  IndicatorDelegate *priceDelegate;
-  IndicatorDelegate *assetsDelegate;
-  IndicatorDelegate *miscDelegate;
-  IndicatorPriceModel *priceModel;
-  IndicatorCashModel *cashModel;
-  IndicatorMiscModel *miscModel;
-  IndicatorResultModel *resultModel;
-  IndicatorAssetsModel *assetsModel;
-  IndicatorPerformModel *performanceModel;
-};
 #endif

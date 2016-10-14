@@ -18,7 +18,7 @@
  */
 #ifndef DATABASE_WIZARD_INCLUDED
 #define DATABASE_WIZARD_INCLUDED
-
+///\file
 #include <QWizard>
 
 QT_BEGIN_NAMESPACE
@@ -26,66 +26,67 @@ class QLabel;
 class QLineEdit;
 QT_END_NAMESPACE
 
-class DatabaseWizard : public QWizard
-{
-  Q_OBJECT
-
-  public:
-    DatabaseWizard(QWidget *parent=0);
-    
-    void accept() Q_DECL_OVERRIDE;
-};
-
-class IntroPage : public QWizardPage
-{
-  Q_OBJECT
-  public:
-    IntroPage(QWidget *parent=0);
-  private:
-    QLabel *label;
-};
-class RootPage : public QWizardPage
-{
-  Q_OBJECT
-  public:
-    RootPage(QWidget *parent=0);
-  protected:
-    bool validatePage() Q_DECL_OVERRIDE; 
-  private:
-    QLabel *hostLabel;
-    QLabel *rootUserLabel;
-    QLabel *rootPasswordLabel;
-    QLineEdit *hostLineEdit;
-    QLineEdit *rootUserLineEdit;
-    QLineEdit *rootPasswordLineEdit;
-};
-
-class UserPage : public QWizardPage
-{
-  Q_OBJECT
-  public:
-    UserPage(QWidget *parent=0);
-  protected:
-    bool validatePage() Q_DECL_OVERRIDE; 
-  private:
-    QLabel *userPasswordLabel;
-    QLabel *userPasswordLabel2;
-    QLineEdit *userPasswordLineEdit;
-    QLineEdit *userPasswordLineEdit2;
-};
-
-class ConclusionPage : public QWizardPage
-{
+namespace Genet { 
+  class DatabaseWizard : public QWizard
+  {
     Q_OBJECT
 
-public:
-    ConclusionPage(QWidget *parent = 0);
+    public:
+      DatabaseWizard(QWidget *parent=0);
 
-protected:
-    void initializePage() Q_DECL_OVERRIDE;
+      void accept() Q_DECL_OVERRIDE;
+  };
 
-private:
-    QLabel *label;
-};
+  class IntroPage : public QWizardPage
+  {
+    Q_OBJECT
+    public:
+      IntroPage(QWidget *parent=0);
+    private:
+      QLabel *label;
+  };
+  class RootPage : public QWizardPage
+  {
+    Q_OBJECT
+    public:
+      RootPage(QWidget *parent=0);
+    protected:
+      bool validatePage() Q_DECL_OVERRIDE; 
+    private:
+      QLabel *hostLabel;
+      QLabel *rootUserLabel;
+      QLabel *rootPasswordLabel;
+      QLineEdit *hostLineEdit;
+      QLineEdit *rootUserLineEdit;
+      QLineEdit *rootPasswordLineEdit;
+  };
 
+  class UserPage : public QWizardPage
+  {
+    Q_OBJECT
+    public:
+      UserPage(QWidget *parent=0);
+    protected:
+      bool validatePage() Q_DECL_OVERRIDE; 
+    private:
+      QLabel *userPasswordLabel;
+      QLabel *userPasswordLabel2;
+      QLineEdit *userPasswordLineEdit;
+      QLineEdit *userPasswordLineEdit2;
+  };
+
+  class ConclusionPage : public QWizardPage
+  {
+    Q_OBJECT
+
+    public:
+      ConclusionPage(QWidget *parent = 0);
+
+    protected:
+      void initializePage() Q_DECL_OVERRIDE;
+
+    private:
+      QLabel *label;
+  };
+}
 #endif

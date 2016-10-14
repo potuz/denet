@@ -18,6 +18,7 @@
  */
 #ifndef GENET_DATABASE_INCLUDED
 #define GENET_DATABASE_INCLUDED
+///\file
 #include <QtGlobal>
 #include "dfp/dfp_database.h"
 
@@ -26,17 +27,18 @@ class QString;
 class QStringList;
 QT_END_NAMESPACE
 
-class GenetDatabase : public Dfp::Database
-{
-  public:
-    GenetDatabase(QString host, QString user, QString password);
+namespace Genet {
+  class GenetDatabase : public Dfp::Database
+  {
+    public:
+      GenetDatabase(QString host, QString user, QString password);
 
-    using Dfp::Database::get_indicator;
-    int get_indicator (int cvm, QString account_number, bool anual,
-        Dfp::FinancialInfoType type) const;
-    void tickers(QStringList &codes) const;
-    using Dfp::Database::get_cvm_from_ticker_str;
-    int get_cvm_from_ticker_str (const QString &str) const;
-};
-
+      using Dfp::Database::get_indicator;
+      int get_indicator (int cvm, QString account_number, bool anual,
+          Dfp::FinancialInfoType type) const;
+      void tickers(QStringList &codes) const;
+      using Dfp::Database::get_cvm_from_ticker_str;
+      int get_cvm_from_ticker_str (const QString &str) const;
+  };
+}
 #endif

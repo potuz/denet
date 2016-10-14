@@ -234,7 +234,7 @@ http://stackoverflow.com/questions/6899025/hide-user-input-on-password-prompt
     {
       Dfp::CvmFile cvmfile ( files[j] );
       try { 
-        cvmfile.import (conn);
+        cvmfile.import (*conn);
       } catch ( Dfp::Exception &e ) { 
         if ( e.getErrorCode()  == EXCEPTION_NO_INTERNET ) {
           std::cerr << "ERRO: Sem acesso a internet. "; 

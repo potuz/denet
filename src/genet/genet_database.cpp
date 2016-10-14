@@ -21,30 +21,31 @@
 #include <QString>
 #include <QStringList>
 
-GenetDatabase::GenetDatabase (QString host, QString user, QString password)
-  : Dfp::Database (host.toStdString(), user.toStdString(), 
-      password.toStdString()) {}
+namespace Genet {
+  GenetDatabase::GenetDatabase (QString host, QString user, QString password)
+    : Dfp::Database (host.toStdString(), user.toStdString(), 
+        password.toStdString()) {}
 
-int GenetDatabase::get_indicator (int cvm, QString account_number, bool anual,
-        Dfp::FinancialInfoType type) const 
-{ 
-  return Dfp::Database::get_indicator (cvm, account_number.toStdString(), 
-      anual, type);
+  int GenetDatabase::get_indicator (int cvm, QString account_number, bool anual,
+      Dfp::FinancialInfoType type) const 
+  { 
+    return Dfp::Database::get_indicator (cvm, account_number.toStdString(), 
+        anual, type);
+  }
+
+  void GenetDatabase::tickers(QStringList &codes) const 
+  {
+    std::unique_ptr<sql::Statement> stmt ( conn->createStatement());
+    stmt->execute ( "USE denet" );
+
+    std::unique_ptr< sql::ResultSet> res(stmt->executeQuery ( 
+          "SELECT ticker FROM tickers")); 
+    while (res->next()) 
+      codes.append (res->getString(1).c_str());
+  }
+
+  int GenetDatabase::get_cvm_from_ticker_str (const QString &str) const
+  {
+    return Dfp::Database::get_cvm_from_ticker_str (str.toStdString());
+  }
 }
-
-void GenetDatabase::tickers(QStringList &codes) const 
-{
-  std::unique_ptr<sql::Statement> stmt ( conn->createStatement());
-  stmt->execute ( "USE denet" );
-
-  std::unique_ptr< sql::ResultSet> res(stmt->executeQuery ( 
-        "SELECT ticker FROM tickers")); 
-  while (res->next()) 
-    codes.append (res->getString(1).c_str());
-}
-
-int GenetDatabase::get_cvm_from_ticker_str (const QString &str) const
-{
-  return Dfp::Database::get_cvm_from_ticker_str (str.toStdString());
-}
-

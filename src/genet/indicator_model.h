@@ -18,6 +18,7 @@
  */
 #ifndef INDICATOR_MODEL_INCLUDED
 #define INDICATOR_MODEL_INCLUDED
+///\file
 #include <QAbstractTableModel>
 #include <QList>
 #include <QPair>
@@ -32,156 +33,157 @@ namespace Dfp
   enum Indicator : unsigned int;
 }
 
-class GenetDatabase;
+namespace Genet { 
+  class GenetDatabase;
 
-class IndicatorModel : public QAbstractTableModel 
-{
-  Q_OBJECT
+  class IndicatorModel : public QAbstractTableModel 
+  {
+    Q_OBJECT
 
-  public:
-    template<class T>
-    IndicatorModel( int cvm, bool anual, Dfp::FinancialInfoType type, 
-        const GenetDatabase &conn, const QList<QPair<QString, T>> &entrypair, 
-        QObject *parent = 0);
-   
-    IndicatorModel( int cvm, bool anual, Dfp::FinancialInfoType type, 
-        const GenetDatabase &conn, QObject *parent = 0);
+    public:
+      template<class T>
+        IndicatorModel( int cvm, bool anual, Dfp::FinancialInfoType type, 
+            const GenetDatabase &conn, const QList<QPair<QString, T>> &entrypair, 
+            QObject *parent = 0);
 
-    int rowCount (const QModelIndex &parent) const Q_DECL_OVERRIDE;
-    int columnCount (const QModelIndex &parent ) const Q_DECL_OVERRIDE;
-    QVariant data (const QModelIndex &index, int role) const Q_DECL_OVERRIDE;
-    QVariant headerData (int section, Qt::Orientation orientation, int role)
-      const Q_DECL_OVERRIDE;
+      IndicatorModel( int cvm, bool anual, Dfp::FinancialInfoType type, 
+          const GenetDatabase &conn, QObject *parent = 0);
 
-  protected:
-    template<class T>
-    void setDataList( int cvm_, bool anual_, Dfp::FinancialInfoType type_, 
-        const QList<QPair<QString, T>> &list );
-    int cvm;
-    bool anual;
-    Dfp::FinancialInfoType type;
-    const GenetDatabase &conn;
-    QList<QPair<QString, QVariant>> ind_val_pair;
+      int rowCount (const QModelIndex &parent) const Q_DECL_OVERRIDE;
+      int columnCount (const QModelIndex &parent ) const Q_DECL_OVERRIDE;
+      QVariant data (const QModelIndex &index, int role) const Q_DECL_OVERRIDE;
+      QVariant headerData (int section, Qt::Orientation orientation, int role)
+        const Q_DECL_OVERRIDE;
 
-  private slots:
-    virtual void setCvm(int) = 0;
-    virtual void setAnual(bool) = 0;
-    virtual void setType(Dfp::FinancialInfoType) = 0;
-};
+    protected:
+      template<class T>
+        void setDataList( int cvm_, bool anual_, Dfp::FinancialInfoType type_, 
+            const QList<QPair<QString, T>> &list );
+      int cvm;
+      bool anual;
+      Dfp::FinancialInfoType type;
+      const GenetDatabase &conn;
+      QList<QPair<QString, QVariant>> ind_val_pair;
 
-class IndicatorPriceModel : public IndicatorModel
-{
-  Q_OBJECT
+      private slots:
+        virtual void setCvm(int) = 0;
+      virtual void setAnual(bool) = 0;
+      virtual void setType(Dfp::FinancialInfoType) = 0;
+  };
 
-  public:
-    IndicatorPriceModel(int cvm, bool anual, Dfp::FinancialInfoType type, 
-        const GenetDatabase &conn, QObject *parent = 0);
+  class IndicatorPriceModel : public IndicatorModel
+  {
+    Q_OBJECT
 
-    void setDataList(int cvm, bool anual, Dfp::FinancialInfoType type);
+    public:
+      IndicatorPriceModel(int cvm, bool anual, Dfp::FinancialInfoType type, 
+          const GenetDatabase &conn, QObject *parent = 0);
 
-  private:
-   static const QList<QPair<QString, Dfp::Indicator>> entrypair;
+      void setDataList(int cvm, bool anual, Dfp::FinancialInfoType type);
 
-  private slots:
-    void setCvm(int);
-    void setType(Dfp::FinancialInfoType);
-    void setAnual(bool);
-};
+    private:
+      static const QList<QPair<QString, Dfp::Indicator>> entrypair;
 
-class IndicatorPerformModel : public IndicatorModel
-{
-  Q_OBJECT
+      private slots:
+        void setCvm(int);
+      void setType(Dfp::FinancialInfoType);
+      void setAnual(bool);
+  };
 
-  public:
-    IndicatorPerformModel(int cvm, bool anual, Dfp::FinancialInfoType type, 
-        const GenetDatabase &conn, QObject *parent = 0);
+  class IndicatorPerformModel : public IndicatorModel
+  {
+    Q_OBJECT
 
-    void setDataList(int cvm, bool anual, Dfp::FinancialInfoType type);
+    public:
+      IndicatorPerformModel(int cvm, bool anual, Dfp::FinancialInfoType type, 
+          const GenetDatabase &conn, QObject *parent = 0);
 
-  private:
-    static const QList<QPair<QString, Dfp::Indicator>> entrypair;
+      void setDataList(int cvm, bool anual, Dfp::FinancialInfoType type);
 
-  private slots:
-    void setCvm(int);
-    void setType(Dfp::FinancialInfoType);
-    void setAnual(bool);
-};
+    private:
+      static const QList<QPair<QString, Dfp::Indicator>> entrypair;
 
-class IndicatorAssetsModel : public IndicatorModel
-{
-  Q_OBJECT
+      private slots:
+        void setCvm(int);
+      void setType(Dfp::FinancialInfoType);
+      void setAnual(bool);
+  };
 
-  public:
-    IndicatorAssetsModel(int cvm, bool anual, Dfp::FinancialInfoType type, 
-        const GenetDatabase &conn, QObject *parent = 0);
+  class IndicatorAssetsModel : public IndicatorModel
+  {
+    Q_OBJECT
 
-    void setDataList(int cvm, bool anual, Dfp::FinancialInfoType type);
+    public:
+      IndicatorAssetsModel(int cvm, bool anual, Dfp::FinancialInfoType type, 
+          const GenetDatabase &conn, QObject *parent = 0);
 
-  private:
-    static const QList<QPair<QString, QString>> entrypair;
+      void setDataList(int cvm, bool anual, Dfp::FinancialInfoType type);
 
-  private slots:
-    void setCvm(int);
-    void setType(Dfp::FinancialInfoType);
-    void setAnual(bool);
-};
+    private:
+      static const QList<QPair<QString, QString>> entrypair;
 
-class IndicatorMiscModel : public IndicatorModel
-{
-  Q_OBJECT
+      private slots:
+        void setCvm(int);
+      void setType(Dfp::FinancialInfoType);
+      void setAnual(bool);
+  };
 
-  public:
-    IndicatorMiscModel(int cvm, bool anual, Dfp::FinancialInfoType type, 
-        const GenetDatabase &conn, QObject *parent = 0);
+  class IndicatorMiscModel : public IndicatorModel
+  {
+    Q_OBJECT
 
-    void setDataList(int cvm, bool anual, Dfp::FinancialInfoType type);
+    public:
+      IndicatorMiscModel(int cvm, bool anual, Dfp::FinancialInfoType type, 
+          const GenetDatabase &conn, QObject *parent = 0);
 
-  private:
-    static const QList<QPair<QString, Dfp::Indicator>> entrypair;
+      void setDataList(int cvm, bool anual, Dfp::FinancialInfoType type);
 
-  private slots:
-    void setCvm(int);
-    void setType(Dfp::FinancialInfoType);
-    void setAnual(bool);
-};
+    private:
+      static const QList<QPair<QString, Dfp::Indicator>> entrypair;
 
-class IndicatorCashModel : public IndicatorModel
-{
-  Q_OBJECT
+      private slots:
+        void setCvm(int);
+      void setType(Dfp::FinancialInfoType);
+      void setAnual(bool);
+  };
 
-  public:
-    IndicatorCashModel(int cvm, bool anual, Dfp::FinancialInfoType type, 
-        const GenetDatabase &conn, QObject *parent = 0);
+  class IndicatorCashModel : public IndicatorModel
+  {
+    Q_OBJECT
 
-    void setDataList(int cvm, bool anual, Dfp::FinancialInfoType type);
+    public:
+      IndicatorCashModel(int cvm, bool anual, Dfp::FinancialInfoType type, 
+          const GenetDatabase &conn, QObject *parent = 0);
 
-  private:
-    static const QList<QPair<QString, QString>> entrypair;
+      void setDataList(int cvm, bool anual, Dfp::FinancialInfoType type);
 
-  private slots:
-    void setCvm(int);
-    void setType(Dfp::FinancialInfoType);
-    void setAnual(bool);
-};
+    private:
+      static const QList<QPair<QString, QString>> entrypair;
 
-class IndicatorResultModel : public IndicatorModel
-{
-  Q_OBJECT
+      private slots:
+        void setCvm(int);
+      void setType(Dfp::FinancialInfoType);
+      void setAnual(bool);
+  };
 
-  public:
-    IndicatorResultModel(int cvm, bool anual, Dfp::FinancialInfoType type, 
-        const GenetDatabase &conn, QObject *parent = 0);
+  class IndicatorResultModel : public IndicatorModel
+  {
+    Q_OBJECT
 
-    void setDataList(int cvm, bool anual, Dfp::FinancialInfoType type);
+    public:
+      IndicatorResultModel(int cvm, bool anual, Dfp::FinancialInfoType type, 
+          const GenetDatabase &conn, QObject *parent = 0);
 
-  private:
-    static const QList<QPair<QString, QString>> entrypair;
+      void setDataList(int cvm, bool anual, Dfp::FinancialInfoType type);
 
-  private slots:
-    void setCvm(int);
-    void setType(Dfp::FinancialInfoType);
-    void setAnual(bool);
-};
+    private:
+      static const QList<QPair<QString, QString>> entrypair;
 
+      private slots:
+        void setCvm(int);
+      void setType(Dfp::FinancialInfoType);
+      void setAnual(bool);
+  };
+}
 #endif
 
