@@ -1,7 +1,7 @@
 /*  This file is part of denet. 
  *  denet is a tool to study Bovespa-listed companies. 
  *
- *  Copyright (c) 2016 - Potuz Vader potuz@potuz.net
+ *  Copyright (c) 2016 - Potuz potuz@potuz.net
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -105,7 +105,7 @@ void MainWindow::wizardDB()
 void MainWindow::about()
 {
   QMessageBox::about(this, tr("Acerca de genet"),
-      tr("<p><b>genet Copyright (C) 2016 Potuz Vader potuz@potuz.net</b></p>"
+      tr("<p><b>genet Copyright (C) 2016 Potuz potuz@potuz.net</b></p>"
         "<p>Uma plataforma de análise fundamentalista de empresas"
         " negociadas na BMF&Bovespa.</p>"
         "<p>Esse programa <b>não tem nenhuma garantia</b> e é distribuído sob " 

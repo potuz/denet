@@ -1,7 +1,7 @@
 /*  This file is part of denet. 
  *  denet is a tool to study Bovespa-listed companies. 
  *
- *  Copyright (c) 2016 Potuz Vader potuz@potuz.net
+ *  Copyright (c) 2016 Potuz potuz@potuz.net
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by

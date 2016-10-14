@@ -1,7 +1,7 @@
 /*  This file is part of denet. 
  *  denet is a tool to study Bovespa-listed companies. 
  *
- *  Copyright (c) 2016 - Potuz Vader potuz@potuz.net
+ *  Copyright (c) 2016 - Potuz potuz@potuz.net
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -88,7 +88,7 @@ int main (int argc, const char * argv[] ) {
     "cvmfetch -l EALT4 \n"
     "cvmfetch -d 05942\n"
     "cvmfetch -D -i 2014-04-29 -s meusegredo\n";
-  opt.footer = "cvmfetch 1.0 Copyright (C) 2016 Potuz Vader potuz@potuz.net\n"
+  opt.footer = "cvmfetch 1.0 Copyright (C) 2016 Potuz potuz@potuz.net\n"
     "This program is free and without warranty\n";
   opt.add(
       "", // Default.
