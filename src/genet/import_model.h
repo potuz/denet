@@ -20,6 +20,7 @@
  */
 #ifndef IMPORT_MODEL_INCLUDED
 #define IMPORT_MODEL_INCLUDED
+/// \file
 #include <QAbstractItemModel>
 #include <QModelIndex>
 #include <QVariant>

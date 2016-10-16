@@ -260,6 +260,7 @@ void Dfp::CvmFile::import (const Dfp::Database &conn) {
         std::to_string ( exercise.tm_mday - 7 ) + "&c=" + 
         std::to_string ( exercise.tm_year + 1900) ;
       curl_easy_setopt(curl, CURLOPT_URL, url.c_str() );
+      curl_easy_setopt(curl,CURLOPT_NOSIGNAL, 1);
       curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
       curl_easy_setopt(curl, CURLOPT_WRITEDATA, &acct.value);
       res = curl_easy_perform(curl);

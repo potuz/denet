@@ -18,6 +18,7 @@
  */
 #ifndef BALANCE_MODEL_INCLUDED
 #define BALANCE_MODEL_INCLUDED
+/// \file
 #include <QAbstractItemModel>
 #include <QModelIndex>
 #include <QVariant>

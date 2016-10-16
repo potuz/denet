@@ -20,10 +20,10 @@
  */
 #ifndef IMPORT_VIEW_INCLUDED
 #define IMPORT_VIEW_INCLUDED
+///\file
 #include <QDialog>
 #include <QItemSelectionModel>
 #include <QTreeView>
-
 namespace Genet { 
   class GenetDatabase;
 
@@ -34,13 +34,19 @@ namespace Genet {
     public: 
       ImportView(int cvm, const GenetDatabase &conn, QWidget *parent=0);
 
+    signals:
+      void addText (const QString &str);
+
     protected slots:
       void processSelection(const QItemSelection& selected, 
                                       const QItemSelection& deselected) const;
       void accept();
+
     private:
+      std::string tempPath;
       QTreeView *view;
       const GenetDatabase &conn;
+      void import(const QModelIndex &index);
 
   };
 }

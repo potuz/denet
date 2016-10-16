@@ -22,14 +22,14 @@
 #include "genet_database.h"
 #include "import_view.h" 
 #include "import_model.h"
-#include <QLabel>
-#include <QLayout>
-#include <QPushButton>
+#include "import_progress_dialog.h"
 #include <QHeaderView>
-#include <QDebug>
-#include <QProgressDialog>
 #include <QTemporaryDir>
-#include <QThread>
+#include <QtConcurrent/QtConcurrent>
+#include <QMessageBox>
+#include <QLabel>
+#include <QPushButton>
+#include <QLayout>
 
 Genet::ImportView::ImportView(int cvm, const GenetDatabase &conn, 
     QWidget *parent) : QDialog (parent), conn(conn)
@@ -89,41 +89,81 @@ void Genet::ImportView::processSelection(const QItemSelection& selected,
     selectionModel->select(invalid, QItemSelectionModel::Deselect);
 }
 
+void Genet::ImportView::import(const QModelIndex &index)
+{
+    emit addText(
+        QString("Importando arquivo %1.").arg(index.data().toString()));
+    int protocol = index.data().toInt();
+    QSettings settings(QCoreApplication::organizationName(), 
+        QCoreApplication::applicationName());
+    QString host = settings.value("host").toString();
+    QString password = settings.value("password").toString();
+    std::unique_ptr<GenetDatabase> conn_;
+    try {
+        conn_ = std::make_unique<GenetDatabase> (host, "denet", password);
+      } catch ( sql::SQLException &e )
+      {
+        switch ( e.getErrorCode() ) {
+          case 1045: 
+            {
+              auto printable = QStringLiteral ( "<p>A senha guardada para "
+                  "a base de dados é incorreta. Talvez você mudou a senha "
+                  "utilizando outro programa?.</p>"
+                  "<p>Intente configurando a base de dados novamente"
+                  ". O erro reportado pelo "
+                  "servidor é:</p>%1").arg(e.what());
+              QMessageBox::critical (this, tr("mensagem critica"), printable, 
+                  QMessageBox::Ok);
+              return;
+            }
+            break;
+          default: throw;
+                   break;
+
+        } 
+      }
+
+  std::string filename = Dfp::Cvm::download (protocol, tempPath);
+  Dfp::CvmFile cvmFile (filename);
+  cvmFile.import(*conn_);
+}
+
 void Genet::ImportView::accept() 
 {
   QItemSelectionModel* selectionModel = view->selectionModel();
-  QModelIndexList selection = selectionModel->selectedRows(2); //protocol
-  QProgressDialog *progress = new QProgressDialog("Importando arquivos...", 
-      "Cancelar", 0, 2*selection.size()+1);
-  progress->setMinimumDuration(0);
-  progress->setWindowModality(Qt::WindowModal);
-  progress->setValue(0);
+  QModelIndexList protocolList = selectionModel->selectedRows(2); //protocol
+  Genet::ImportProgressDialog *dialog = new ImportProgressDialog (this);
+
   QTemporaryDir dir; 
   if (!dir.isValid()) throw std::runtime_error ("Can't create dir\n");
-  std::string tempPath = dir.path().toStdString();
+  tempPath = dir.path().toStdString();
   #ifdef _WIN32  
-    tempPath.append("\\");
+  tempPath.append("\\");
   #elif defined (__linux)
-    tempPath.append("/");
+  tempPath.append("/");
   #endif
-  for (int i = 1; i < selection.size()+1; ++i) 
-  {
-    progress->setValue(2*i-1);
-    if (progress->wasCanceled())
-      break;
-    progress->setLabelText(tr("Descarregando arquivo %1 de %2 da CVM.").\
-        arg(i).arg(selection.size()));
-    int protocol = selection.at(i-1).data().toInt();
-    std::string filename = Dfp::Cvm::download (protocol, tempPath);
-    progress->setValue(2*i);
-    if (progress->wasCanceled())
-      break;
-    progress->setLabelText(tr("Importando arquivo %1 de %2 á base de dados.").\
-        arg(i).arg(selection.size()));
-    Dfp::CvmFile cvmFile (filename);
-    cvmFile.import(conn);
-  }
-  progress->setValue(2*selection.size()+1);
-  delete progress;
+
+
+    QFutureWatcher<void> futureWatcher;
+  QObject::connect(&futureWatcher, SIGNAL(finished()), dialog, SLOT(reset()));
+  QObject::connect(dialog, SIGNAL(canceled()), &futureWatcher, 
+      SLOT(cancel()));
+  QObject::connect(&futureWatcher, SIGNAL(progressRangeChanged(int,int)), 
+      dialog, SLOT(setRange(int,int)));
+  QObject::connect(&futureWatcher, SIGNAL(progressValueChanged(int)), dialog, 
+      SLOT(setValue(int)));
+
+  futureWatcher.setFuture(QtConcurrent::map(protocolList, 
+        [this] (const QModelIndex &index) { import(index);}));
+
+  QObject::connect(this, SIGNAL(addText(const QString& )), dialog, 
+      SLOT(appendText (const QString&)), Qt::QueuedConnection);
+
+  dialog->exec();
+
+  futureWatcher.waitForFinished();
+
+  delete dialog;
   QDialog::accept();
 }
+

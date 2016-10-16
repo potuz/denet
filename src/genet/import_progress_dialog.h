@@ -1,9 +1,9 @@
-/*  import_item.h 
+/*  import_progress_dialog.h 
  * 
  *  This file is part of denet. 
  *  denet is a tool to study Bovespa-listed companies. 
  *
- *  Copyright (c) 2016 - Potuz potuz@potuz.net
+ *  Copyright (c) 2016 - Potuz Vader potuz@potuz.net
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,35 +18,27 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef IMPORT_ITEM_INCLUDED  
-#define IMPORT_ITEM_INCLUDED
 /// \file
-#include <QVector>
-#include <QVariant>
+#ifndef IMPORT_PROGRESS_DIALOG_H
+#define IMPORT_PROGRESS_DIALOG_H
+#include <QProgressDialog>
+
+QT_BEGIN_NAMESPACE
+class QTextEdit;
+QT_END_NAMESPACE
+
 
 namespace Genet {
-
-  class ImportItem
+  class ImportProgressDialog : public  QProgressDialog
   {
-    public:
-      explicit ImportItem(const QVector<QVariant> &data, 
-          ImportItem *parent = 0);
-      ~ImportItem();
-
-      ImportItem *child(int number);
-      int childCount() const;
-      int columnCount() const;
-      QVariant data(int column) const;
-      ImportItem *parent();
-      bool insertChild(const QVector<QVariant> &data);
-      int childNumber() const;
-      bool setData(int column, const QVariant &value);
-
-
+    Q_OBJECT
+    public: 
+      ImportProgressDialog(QWidget *parent = 0);
+    public slots: 
+      void appendText (const QString &str);
     private:
-      ImportItem *parentItem;
-      QList<ImportItem*> childItems;
-      QVector<QVariant> itemData;
-  };
+      QTextEdit *textEdit;
+};
 }
+
 #endif

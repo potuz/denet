@@ -29,9 +29,20 @@
 #include "dfp_exception.h"
 
 namespace { 
-  std::unique_ptr<sql::Connection> init_conn ( const std::string& host, 
-      const std::string& user, const std::string& passwd ) {
-    sql::Driver *driver (sql::mysql::get_driver_instance()); 
+  std::string tm_to_string ( const std::tm& tm ) {
+    //TODO Do this with <iomanip> when available 
+    std::string date_str;
+    date_str.resize(11);
+    strftime(&date_str[0], date_str.size(), "%Y-%m-%d", &tm);
+    return date_str;
+  };
+};
+
+std::unique_ptr<sql::Connection> Dfp::Database::init_conn ( 
+    const std::string& host, const std::string& user, 
+    const std::string& passwd ) const 
+{
+    driver->threadInit();
     std::unique_ptr<sql::Connection> conn ( 
         driver->connect(host, user, passwd) );
     std::unique_ptr<sql::Statement> stmt (
@@ -42,17 +53,17 @@ namespace {
     if (res->getString(1).compare("denet")==0)
       return conn;
     throw Dfp::Exception("No user denet registered", Dfp::EXCEPTION_NO_USER);
-  };
-  std::string tm_to_string ( const std::tm& tm ) {
-    //TODO Do this with <iomanip> when available 
-    std::string date_str;
-    date_str.resize(11);
-    strftime(&date_str[0], date_str.size(), "%Y-%m-%d", &tm);
-    return date_str;
-  };
-};
+}
+
 Dfp::Database::Database ( const std::string& host, const std::string& user, 
-    const std::string& passwd ) : conn ( init_conn (host, user, passwd) ) { };
+    const std::string& passwd ) : driver (sql::mysql::get_driver_instance()),
+    conn ( init_conn (host, user, passwd) ) { }
+
+Dfp::Database::~Database()
+{
+  driver->threadEnd();
+}
+
 Dfp::Company Dfp::Database::get_company_from_cvm ( int cvm ) const 
 {
   std::unique_ptr< sql::Statement> stmt ( conn->createStatement());
@@ -79,7 +90,7 @@ Dfp::Company Dfp::Database::get_company_from_cvm ( int cvm ) const
       res->getString(3), tickers_vect, res->getString(4), res->getString(5),
       res->getString(6), res->getString(7), res->getString(8), 
       res->getString(9), *this); 
-};
+}
 
 int Dfp::Database::get_cvm_from_ticker_str ( const std::string & str ) const
 {
@@ -368,11 +379,16 @@ float Dfp::Database::get_indicator ( int cvm,  Dfp::Indicator indicator,
                get_indicator( cvm, "1.90.03", exercise) + 
                get_indicator( cvm, "1.89.02", exercise) *
                get_indicator( cvm, "1.90.04", exercise) ) / 100;
-          else return  // Assume PNA exist!
-            (get_indicator( cvm, "1.89.01", exercise) * 
-             get_indicator( cvm, "1.90.03", exercise) + 
-             get_indicator( cvm, "1.89.02", exercise) *
-             get_indicator( cvm, "1.90.05", exercise) ) / 100;
+          else if ( std::find_if ( tickers.begin(), tickers.end(), 
+                find_ticker (DFP_TICKER_PNA ) ) != tickers.end() )
+            return 
+              (get_indicator( cvm, "1.89.01", exercise) * 
+              get_indicator( cvm, "1.90.03", exercise) + 
+              get_indicator( cvm, "1.89.02", exercise) *
+              get_indicator( cvm, "1.90.05", exercise) ) / 100;
+          else return 
+              get_indicator( cvm, "1.89.01", exercise) * 
+              get_indicator( cvm, "1.90.03", exercise) /100;
         }
         else {
           int ret = 0;

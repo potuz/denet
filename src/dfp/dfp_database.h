@@ -97,12 +97,17 @@ namespace Dfp {
   /// directly. 
   class Database 
   {
+    private:
+      std::unique_ptr<sql::Connection> init_conn (const std::string& host, 
+          const std::string& user, const std::string& passwd ) const;
+      sql::Driver *driver; 
     protected:
     const std::unique_ptr<sql::Connection> conn;
 
     public:
       Database ( const std::string& host, const std::string& user, 
           const std::string& passwd );
+      ~Database ();
 
       void import_account ( int cvm, const DatabaseAccount& acct ) const ;
       Dfp::Company get_company_from_cvm ( int cvm ) const;

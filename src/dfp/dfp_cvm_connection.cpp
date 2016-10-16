@@ -105,6 +105,7 @@ namespace Dfp {
           "ExibeTodosDocumentosCVM.asp?CCVM=" + std::to_string( cvm ) + 
           "&TipoDoc=C&QtLinks=" + std::to_string (links);
         curl_easy_setopt( curl, CURLOPT_URL, url_str.c_str() );
+        curl_easy_setopt(curl,CURLOPT_NOSIGNAL, 1);
         std::string hdncategory;
         switch (filetype) { 
           case DFP_CVM_FILE_DFP: hdncategory = "IDI2";
@@ -186,6 +187,7 @@ namespace Dfp {
           "CodigoInstituicao=1&NumeroSequencialDocumento=" +
           std::to_string (protocol) ;
         curl_easy_setopt( curl, CURLOPT_URL, url_str.c_str());
+        curl_easy_setopt(curl,CURLOPT_NOSIGNAL, 1);
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
         curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, header_cb);
         curl_easy_setopt(curl, CURLOPT_HEADERDATA, &urldata);

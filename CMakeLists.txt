@@ -36,6 +36,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 find_package(Qt5Widgets REQUIRED)
+find_package(Qt5Concurrent REQUIRED)
 find_package(MySQL REQUIRED)
 find_package(MySQLConnectorCpp REQUIRED)
 find_package(LibArchive REQUIRED)
@@ -85,9 +86,10 @@ add_executable ( genet
   src/genet/import_model.cpp
   src/genet/import_view.cpp
   src/genet/import_item.cpp
+  src/genet/import_progress_dialog.cpp
   )
 
-target_link_libraries ( genet Qt5::Widgets dfp )
+target_link_libraries ( genet Qt5::Widgets Qt5Concurrent dfp )
 
 
 install ( TARGETS dfp denet cvmfetch genet
