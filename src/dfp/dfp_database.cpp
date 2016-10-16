@@ -37,8 +37,11 @@ namespace {
     std::unique_ptr<sql::Statement> stmt (
         conn->createStatement ());
     std::unique_ptr< sql::ResultSet> res (stmt->executeQuery (
-          "SHOW GRANTS FOR " + user + "@" + host) ) ;
-    return conn;
+          "SELECT SUBSTRING_INDEX(CURRENT_USER(),\'@\', 1)"));
+    res->next();
+    if (res->getString(1).compare("denet")==0)
+      return conn;
+    throw Dfp::Exception("No user denet registered", Dfp::EXCEPTION_NO_USER);
   };
   std::string tm_to_string ( const std::tm& tm ) {
     //TODO Do this with <iomanip> when available 

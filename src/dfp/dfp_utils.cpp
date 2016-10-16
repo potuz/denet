@@ -68,15 +68,6 @@ void Dfp::setup_dbase ( const std::string & user, const std::string &passwd,
       " OPTIONALLY ENCLOSED BY \'\"\'"
       " ESCAPED BY \'\\\\\'"
       " LINES TERMINATED BY \'\\n\'" );
-  //TODO: create a user for the remote host as well. If we are given grants
-  //as root we can use "select substring_index(current_user(), '@', -1)"
-  //to get the host that allowed us authorization. We should also create the
-  //user at localhost anyway. 
-  //
-  //The Grant command identified by should do. 
-//  stmt->execute ( "CREATE USER denet@" + host + " IDENTIFIED BY \'" + 
-//      denetpwd + "\'");
-//  stmt->execute ("GRANT ALL ON denet.* TO denet@" + host );
   res.reset ( stmt->executeQuery( "SELECT SUBSTRING_INDEX(CURRENT_USER(),"
         "\'@\',-1)"));
   res->next();
