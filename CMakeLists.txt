@@ -12,6 +12,8 @@ if(${CMAKE_BUILD_TYPE} STREQUAL "DEBUG")
     "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}-pre")
   configure_file ( COPYING 
     "${PROJECT_BINARY_DIR}/COPYING" COPYONLY)
+  configure_file ( src/genet/genet_pt.qm 
+    "${PROJECT_BINARY_DIR}/genet_pt.qm" COPYONLY)
   configure_file ( data/tickers.csv 
     "${PROJECT_BINARY_DIR}/tickers.csv" COPYONLY)
   configure_file ( data/companies.csv
@@ -98,6 +100,7 @@ install ( TARGETS dfp denet cvmfetch genet
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib )
 install ( FILES data/companies.csv data/tickers.csv COPYING
+  src/genet/genet_pt.qm
   DESTINATION share/denet )
 install ( FILES 
   src/genet/images/application-exit.png

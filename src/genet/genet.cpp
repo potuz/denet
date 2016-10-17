@@ -19,6 +19,10 @@
 #include <QApplication>
 #include <QCommandLineOption>
 #include <QLocale>
+#include <QTranslator>
+#include <QLibraryInfo>
+#include <QDebug>
+#include <QMessageBox>
 #include "config.h"
 #include "mainwindow.h"
 
@@ -26,15 +30,21 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     
-    QLocale::setDefault(QLocale(QLocale::Portuguese, QLocale::Brazil));
+    QLocale::setDefault(QLocale("pt_BR"));
 
     QCoreApplication::setOrganizationName("Death Star");
     QCoreApplication::setOrganizationDomain("potuz.net");
     QCoreApplication::setApplicationName("genet");
     QCoreApplication::setApplicationVersion(PROJECT_VERSION_COMPLETE);
 
-    Genet::MainWindow mainWin;
-    mainWin.show();
+    QTranslator qtTranslator;
+    if (qtTranslator.load(DATAFILE_PATH"genet_pt"))
+    { 
+      qDebug() << "qtTranslator ok"; 
+      app.installTranslator(&qtTranslator); 
+    }
+    
+    Genet::MainWindow mainWin; mainWin.show();
     return app.exec();
 }
 
