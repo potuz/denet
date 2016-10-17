@@ -130,16 +130,28 @@ void MainWindow::wizardDB()
 
 void MainWindow::about()
 {
-  QMessageBox::about(this, tr("Acerca de genet"),
-      tr("<p><b>genet Copyright (C) 2016 Potuz potuz@potuz.net</b></p>"
+  QMessageBox aboutBox; 
+  aboutBox.setText(tr("<p><b>genet Copyright (C) 2016 Potuz potuz@potuz.net"
+        "</b></p>"
         "<p>Uma plataforma de análise fundamentalista de empresas"
-        " negociadas na BMF&Bovespa.</p>"
-        "<p>Esse programa <b>não tem nenhuma garantia</b> e é distribuído sob " 
-        "os termos da licencia \"GNU General Public License version 3\"</p>"
+        " negociadas na BMF&Bovespa.</p>"));
+  aboutBox.setInformativeText(
+      tr("<p>Esse programa <b>não tem nenhuma garantia</b> e é distribuído sob"  
+        " os termos da licencia \"GNU General Public License version 3\"</p>"
         "<p>Esse programa é software livre e você é "
-        "permitido de redistribui-lo sob certas condições. Consulte o arquivo"
-        " \"COPYING\" distribuído com as fontes desse programa para mais "
-        "detalhes</p>"));
+        "permitido de redistribui-lo sob certas condições. Pressione o "
+        "botão \"Licença\" para mais informações.</p>"));
+  aboutBox.setStandardButtons (QMessageBox::Ok);
+  aboutBox.setDefaultButton(QMessageBox::Ok);
+  QFile licenseFile (DATAFILE_PATH"COPYING");
+  if (!licenseFile.open(QIODevice::ReadOnly | QIODevice::Text))
+    return;
+
+  QTextStream licenseText (&licenseFile);
+  QString licenseString = licenseText.readAll();
+  aboutBox.setDetailedText(licenseString);
+  licenseFile.close();
+  aboutBox.exec();
 }
 
 void MainWindow::help()

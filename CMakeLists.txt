@@ -10,6 +10,8 @@ if(${CMAKE_BUILD_TYPE} STREQUAL "DEBUG")
   set ( IMAGEFILE_PATH "${PROJECT_BINARY_DIR}/images/" )
   set ( PROJECT_VERSION_COMPLETE
     "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}-pre")
+  configure_file ( COPYING 
+    "${PROJECT_BINARY_DIR}/COPYING" COPYONLY)
   configure_file ( data/tickers.csv 
     "${PROJECT_BINARY_DIR}/tickers.csv" COPYONLY)
   configure_file ( data/companies.csv
@@ -95,7 +97,7 @@ target_link_libraries ( genet Qt5::Widgets Qt5Concurrent dfp )
 install ( TARGETS dfp denet cvmfetch genet
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib )
-install ( FILES data/companies.csv data/tickers.csv 
+install ( FILES data/companies.csv data/tickers.csv COPYING
   DESTINATION share/denet )
 install ( FILES 
   src/genet/images/application-exit.png
