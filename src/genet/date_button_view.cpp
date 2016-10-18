@@ -27,7 +27,7 @@ Genet::DateButtonView::DateButtonView(int cvm, const GenetDatabase &conn,
 {
   button = new QComboBox;
   model = new QStringListModel;
-  setupModel();
+//  setupModel();
   button->setModel(model);
   button->setSizeAdjustPolicy(QComboBox::AdjustToContents);
 
@@ -42,6 +42,7 @@ void Genet::DateButtonView::setCvm(int cvm_)
 {
   cvm = cvm_;
   setupModel();
+  button->setCurrentIndex(0);
 }
 
 void Genet::DateButtonView::emitDate(const QString &date_str)
@@ -55,3 +56,7 @@ void Genet::DateButtonView::setupModel()
   model->setStringList(conn.get_exercise_list(cvm));
 }
 
+void Genet::DateButtonView::setCurrentIndex(int index)
+{
+  button->setCurrentIndex(index);
+}

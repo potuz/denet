@@ -76,7 +76,7 @@ Genet::BalanceModel::BalanceModel(int cvm, const GenetDatabase &conn,
       return;
     }
   }
-  setupModel();
+//  setupModel();
 }
 Genet::BalanceModel::~BalanceModel()
 {

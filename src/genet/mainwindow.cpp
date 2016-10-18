@@ -48,10 +48,7 @@ void MainWindow::import()
   ImportView *view = new ImportView(cvm, *conn);
   view->setAttribute(Qt::WA_DeleteOnClose);
   view->exec();
-}
-
-void MainWindow::download()
-{
+  delete view;
 }
 
 void MainWindow::setFinancialInfoType (int index)
@@ -160,10 +157,6 @@ void MainWindow::help()
 {
 }
 
-void MainWindow::showIndicators()
-{
-}
-
 void MainWindow::createActions()
 {
   QMenu *dbMenu = menuBar()->addMenu(tr("&Database"));
@@ -221,7 +214,7 @@ void MainWindow::createActions()
   dbToolBar->addWidget(emptySpace4);
   DateButtonView *dateButton = new DateButtonView(cvm, *conn);
   dbToolBar->addWidget(dateButton);
-  connect(this, SIGNAL(changedCvm(int)), dateButton, SLOT(setCvm(int)));
+  dateButton->setEnabled(false);
 
   QWidget *emptySpace3 = new QWidget();
   emptySpace3->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
@@ -248,27 +241,41 @@ void MainWindow::createActions()
 
   QMenu *viewMenu = menuBar()->addMenu(tr("&Ver"));
 //  QAction *summaryAction = viewMenu->AddAction(tr("&Resumo"));
-  QAction *indicatorAction = viewMenu->addAction(tr("&Indicadores"), this,
-      &MainWindow::showIndicators);
+  QAction *indicatorAction = viewMenu->addAction(tr("&Indicadores"));
+  connect(indicatorAction, &QAction::triggered, [=](){
+      mainStackedWidget->setCurrentIndex(INDICATOR_PAGE);});
+  connect(indicatorAction, &QAction::triggered, [=](){
+      dateButton->setEnabled(false);});
   QAction *assetsAction = viewMenu->addAction(tr("Balanço &Ativos"));
   connect(assetsAction, &QAction::triggered, [=](){
-      mainStackedWidget->setCurrentIndex(1);});
+      mainStackedWidget->setCurrentIndex(BALANCE_PAGE);});
+  connect(assetsAction, &QAction::triggered, [=](){
+      dateButton->setEnabled(true);});
   QAction *liabilitiesAction = viewMenu->addAction(tr("Balanço &Passivos"));
   connect(liabilitiesAction, &QAction::triggered, [=](){
-      mainStackedWidget->setCurrentIndex(1);});
+      mainStackedWidget->setCurrentIndex(BALANCE_PAGE);});
+  connect(liabilitiesAction, &QAction::triggered, [=](){
+      dateButton->setEnabled(true);});
   QAction *resultAction = viewMenu->addAction(tr("Demonstrativo &Resultados"));
   connect(resultAction, &QAction::triggered, [=](){
-      mainStackedWidget->setCurrentIndex(1);});
+      mainStackedWidget->setCurrentIndex(BALANCE_PAGE);});
+  connect(resultAction, &QAction::triggered, [=](){
+      dateButton->setEnabled(true);});
   QAction *draAction = viewMenu->addAction(tr("Resultados A&brangentes"));
   connect(draAction, &QAction::triggered, [=](){
-      mainStackedWidget->setCurrentIndex(1);});
+      mainStackedWidget->setCurrentIndex(BALANCE_PAGE);});
+  connect(draAction, &QAction::triggered, [=](){
+      dateButton->setEnabled(true);});
   QAction *dfcAction = viewMenu->addAction(tr("Fluxo de &Caixa"));
   connect(dfcAction, &QAction::triggered, [=](){
-      mainStackedWidget->setCurrentIndex(1);});
+      mainStackedWidget->setCurrentIndex(BALANCE_PAGE);});
+  connect(dfcAction, &QAction::triggered, [=](){
+      dateButton->setEnabled(true);});
   QAction *dvaAction = viewMenu->addAction(tr("D&VA"));
   connect(dvaAction, &QAction::triggered, [=](){
-      mainStackedWidget->setCurrentIndex(1);});
-//  QAction *liabAction = viewMenu->addAction(tr("Balanço &Passivos"));
+      mainStackedWidget->setCurrentIndex(BALANCE_PAGE);});
+  connect(dvaAction, &QAction::triggered, [=](){
+      dateButton->setEnabled(true);});
 
   QMenu *helpMenu = menuBar()->addMenu(tr("&Ajuda"));
   QAction *aboutAction = helpMenu->addAction(tr("&Sobre"), 
@@ -313,6 +320,8 @@ void MainWindow::createActions()
       balanceView->setBalanceType(Dfp::DFP_BALANCE_DRE);});
   connect(dvaAction, &QAction::triggered, [=](){
       balanceView->setBalanceType(Dfp::DFP_BALANCE_DVA);});
+
+  connect(this, SIGNAL(changedCvm(int)), dateButton, SLOT(setCvm(int)));
 
   mainStackedWidget->addWidget(indicatorView);
   mainStackedWidget->addWidget(balanceView);

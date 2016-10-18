@@ -32,6 +32,11 @@ namespace Dfp {
 }
 
 namespace Genet { 
+enum {
+  INDICATOR_PAGE = 0,
+  BALANCE_PAGE
+};
+
 class MainWindow : public QMainWindow
 {
   Q_OBJECT
@@ -46,7 +51,6 @@ class MainWindow : public QMainWindow
 
   private slots:
     void import();
-    void download();
     void setCompany();
     void companyTextEdited (const QString& );
     void setFinancialInfoType (int );
@@ -54,7 +58,6 @@ class MainWindow : public QMainWindow
     void wizardDB();
     void about();
     void help();
-    void showIndicators();
 
 
   protected:

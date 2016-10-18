@@ -185,7 +185,7 @@ namespace Genet {
     std::unique_ptr< sql::ResultSet> res ( prep_stmt->executeQuery ());
     QStringList vector;
     while (res->next())
-      vector << QString(res->getString(1).c_str());
+      vector.push_front(QString(res->getString(1).c_str()));
     return vector;
   }
 }

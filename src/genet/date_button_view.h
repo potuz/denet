@@ -38,6 +38,7 @@ namespace Genet {
       void changedDate(QDate);
     public slots:
       void setCvm(int);
+      void setCurrentIndex(int);
     private slots:
       void emitDate(const QString&);
     private:
