@@ -155,6 +155,9 @@ namespace Dfp {
           Dfp::FinancialInfoType type = DFP_FINANCIAL_INFO_CONSOLIDATED) const;
       float get_indicator ( int cvm, Dfp::Indicator indicator, 
           Dfp::FinancialInfoType type ) const;
+      std::string get_comment (int cvm, const std::string &account_number, 
+          std::tm date, 
+          Dfp::FinancialInfoType type=DFP_FINANCIAL_INFO_CONSOLIDATED) const;
 
       std::vector<CvmUrl> available_for_download (int cvm, 
           CvmFileType filetype) const;

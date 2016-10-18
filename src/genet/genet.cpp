@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     
-    QLocale::setDefault(QLocale("pt_BR"));
+    QLocale::setDefault (QLocale (QLocale::Portuguese, QLocale::Brazil));
 
     QCoreApplication::setOrganizationName("Death Star");
     QCoreApplication::setOrganizationDomain("potuz.net");

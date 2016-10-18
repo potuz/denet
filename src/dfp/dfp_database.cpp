@@ -568,3 +568,27 @@ void Dfp::Database::import_account ( int cvm,
 }
 
 
+std::string Dfp::Database::get_comment (int cvm, 
+    const std::string &account_number, 
+    std::tm date, 
+    Dfp::FinancialInfoType type) const
+{
+  std::unique_ptr< sql::Statement> stmt ( conn->createStatement());
+  stmt->execute ( "USE denet" );
+  std::unique_ptr<sql::PreparedStatement> prep_stmt (
+      conn->prepareStatement( "SELECT comments from cvm_" + std::to_string(cvm)
+        + " WHERE number=? AND date=? AND financial_info_type=?"));
+  prep_stmt->setString (1,account_number.c_str());
+  std::string date_str=tm_to_string(date);
+  prep_stmt->setString (2,date_str.c_str());
+  prep_stmt->setInt (3,static_cast<int>(type));
+  std::unique_ptr< sql::ResultSet> res ( prep_stmt->executeQuery ());
+  if (!res->next()) 
+    return std::string();
+  return res->getString(1);
+}
+
+
+
+
+

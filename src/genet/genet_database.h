@@ -25,7 +25,13 @@
 QT_BEGIN_NAMESPACE
 class QString;
 class QStringList;
+class QDate;
+class QVariant;
 QT_END_NAMESPACE
+
+namespace sql {
+  class ResultSet;
+}
 
 namespace Genet {
   class GenetDatabase : public Dfp::Database
@@ -39,6 +45,23 @@ namespace Genet {
       void tickers(QStringList &codes) const;
       using Dfp::Database::get_cvm_from_ticker_str;
       int get_cvm_from_ticker_str (const QString &str) const;
+
+      QVector<QVector<QVariant>> get_account_list(int cvm, QDate date, 
+          Dfp::BalanceType balanceType, bool anual = true, 
+          Dfp::FinancialInfoType type = Dfp::DFP_FINANCIAL_INFO_CONSOLIDATED)const;
+      QVector<QVector<QVariant>> get_account_list(int cvm, QDate date,
+          QString number, bool anual=true,
+          Dfp::FinancialInfoType type = Dfp::DFP_FINANCIAL_INFO_CONSOLIDATED)const;
+      
+      bool setValue(int cvm, const QString &number, const QString &date, 
+          Dfp::FinancialInfoType, QVariant value) const;
+
+      QStringList get_exercise_list(int cvm) const;
+      QDate last_imported_qdate(int cvm) const;
+    private:
+      QVector<QVector<QVariant>> process_account_list(int cvm, QDate date,
+      bool anual, Dfp::FinancialInfoType type, 
+      const std::unique_ptr<sql::ResultSet> res) const;
   };
 }
 #endif

@@ -42,6 +42,7 @@ class MainWindow : public QMainWindow
     void changedCvm(int);
     void changedAnual(bool);
     void changedType(Dfp::FinancialInfoType);
+    void changedBalanceType(Dfp::BalanceType);
 
   private slots:
     void import();

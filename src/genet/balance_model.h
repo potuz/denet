@@ -22,41 +22,63 @@
 #include <QAbstractItemModel>
 #include <QModelIndex>
 #include <QVariant>
+#include <QDate>
+#include "dfp/dfp_database.h"
+#include "balance_item.h"
 
 namespace Genet { 
+  class GenetDatabase;
+
   class BalanceModel : public QAbstractItemModel
   {
     Q_OBJECT
 
     public:
+      BalanceModel(int cvm, 
+          const GenetDatabase &conn, 
+          Dfp::BalanceType balanceType,
+          bool anual=true, 
+          QDate date=QDate(), 
+          Dfp::FinancialInfoType type=Dfp::DFP_FINANCIAL_INFO_CONSOLIDATED, 
+          QObject *parent=0);
 
-      BalanceModel(int cvm, const GenetDatabase &conn, QObject *parent=0);
+      ~BalanceModel();
 
-      QVariant data(const QModelIndel &index, int role) const Q_DECL_OVERRIDE;
+      Qt::ItemFlags flags(const QModelIndex &index) const Q_DECL_OVERRIDE;
+      QVariant data(const QModelIndex &index, int role) const Q_DECL_OVERRIDE;
       QVariant headerData(int section, Qt::Orientation orientation, 
           int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
 
       QModelIndex index(int row, int column, const QModelIndex &parent = 
           QModelIndex()) const Q_DECL_OVERRIDE;
 
-      QModelIndex parent(const QModelIndel &index) const Q_DECL_OVERRIDE;
+      QModelIndex parent(const QModelIndex &index) const Q_DECL_OVERRIDE;
 
-      int rowCount(const QModelIndel &parent =
+      int rowCount(const QModelIndex &parent =
           QModelIndex()) const Q_DECL_OVERRIDE;
-      int columnCount(const QModelIndel &parent = 
-          QModelIndel()) const Q_DECL_OVERRIDE;
+      int columnCount(const QModelIndex &parent = 
+          QModelIndex()) const Q_DECL_OVERRIDE;
 
-      bool setData(const QModelIndel &index, const QVariant &value, 
-          int role = Qt::EditRole) const Q_DECL_OVERRIDE;
+      bool setData(const QModelIndex &index, const QVariant &value, 
+          int role = Qt::EditRole);
 
-      private slots:
-        void setCvm(int);
-      void setExercise(std::tm);
+    private slots:
+      void setCvm(int);
+      void setAnual(bool);
+      void setExercise(QDate);
+      void setBalanceType(Dfp::BalanceType);
       void setType(Dfp::FinancialInfoType);
 
     private:
+      int cvm;
       const GenetDatabase &conn;
-
-  }
+      bool anual;
+      QDate date;
+      Dfp::BalanceType balanceType;
+      Dfp::FinancialInfoType type;
+      BalanceItem *getItem(const QModelIndex &index) const;
+      BalanceItem *rootItem;
+      void setupModel ();
+  };
 }
 #endif

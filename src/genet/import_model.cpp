@@ -125,8 +125,7 @@ QModelIndex Genet::ImportModel::parent(
     return createIndex(parentItem->childNumber(), 0, parentItem);
 }
 
-QVariant Genet::ImportModel::data(const QModelIndex &index, 
-                                              int role) const 
+QVariant Genet::ImportModel::data(const QModelIndex &index, int role) const 
 {
     if (!index.isValid())
         return QVariant();

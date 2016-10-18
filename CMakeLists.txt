@@ -91,6 +91,10 @@ add_executable ( genet
   src/genet/import_view.cpp
   src/genet/import_item.cpp
   src/genet/import_progress_dialog.cpp
+  src/genet/balance_item.cpp
+  src/genet/balance_model.cpp
+  src/genet/balance_view.cpp
+  src/genet/date_button_view.cpp
   )
 
 target_link_libraries ( genet Qt5::Widgets Qt5Concurrent dfp )
