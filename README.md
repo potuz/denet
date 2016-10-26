@@ -37,16 +37,19 @@ Neste momento o programa consta de três partes principais
 ##Instalação a partir do código fonte:
 ###Linux
 + Desde o diretório base (onde `CMakeLists.txt` se encontra)
-    mkdir build && cd $_
-    cmake ../
-    make
-    sudo make install
+
+``` bash
+mkdir build && cd $_
+cmake ../
+make
+sudo make install
+```
 
 ###Windows
 + Abra o GUI de `CMake`
 + Escolha o diretório onde você descompactou as fontes e o diretório onde vai compilar (pode ser o mesmo das fontes, mas preferivelmente um novo diretório por exemplo `build`). 
-+ Clique em `Configure`
-+ Abra o projeto em visual studio e compile 
++ Clique em `Configure`.
++ Abra o projeto em visual studio e compile.
 
 ##Autor 
 **Potuz** <potuz@potuz.net>

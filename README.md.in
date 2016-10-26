@@ -37,10 +37,13 @@ Neste momento o programa consta de três partes principais
 ##Instalação a partir do código fonte:
 ###Linux
 + Desde o diretório base (onde `CMakeLists.txt` se encontra)
-    mkdir build && cd $_
-    cmake ../
-    make
-    sudo make install
+
+```
+mkdir build && cd $_
+cmake ../
+make
+sudo make install
+```
 
 ###Windows
 + Abra o GUI de `CMake`
