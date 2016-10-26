@@ -60,6 +60,7 @@ Também estou regularmente no [ClubInvest](http://clubinvest.boards.net).
 A lista seguinte não é exaustiva, qualquer ajuda é bem-vinda.
 + Código em forma de patches contra `master` ou _pull requests_.
 + Testar o aplicativo e informar de erros recebidos, erros de compilação, erros de _runtime_.
++ Solicitar funcionalidades que você considere úteis. 
 + Escrever um manual ou ajudar a documentar o projeto. 
 + Português não é a minha primeira língua, correções nos textos tanto da página como nos aplicativos serão bem-vindas. 
 
