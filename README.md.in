@@ -45,8 +45,8 @@ Neste momento o programa consta de três partes principais
 ###Windows
 + Abra o GUI de `CMake`
 + Escolha o diretório onde você descompactou as fontes e o diretório onde vai compilar (pode ser o mesmo das fontes, mas preferivelmente um novo diretório por exemplo `build`). 
-+ Clique em `Configure`
-+ Abra o projeto em visual studio e compile 
++ Clique em `Configure`.
++ Abra o projeto em visual studio e compile.
 
 ##Autor 
 **Potuz** <potuz@potuz.net>
