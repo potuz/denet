@@ -32,6 +32,7 @@
 namespace Genet { 
 MainWindow::MainWindow() : 
   mainStackedWidget ( new QStackedWidget ),
+  cvm(0),
   anual(true), 
   financial_info_type(Dfp::DFP_FINANCIAL_INFO_CONSOLIDATED)
 {
