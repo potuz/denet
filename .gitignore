@@ -10,6 +10,5 @@ data/companies-complete.csv
 data/companies.sql
 debug-build
 docs
-README.md
 Makefile
 src/header.txt
