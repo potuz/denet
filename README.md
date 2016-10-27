@@ -36,14 +36,12 @@ Neste momento o programa consta de três partes principais
 
 ##Instalação a partir do código fonte:
 ###Linux
-+ Desde o diretório base (onde `CMakeLists.txt` se encontra)
+Desde o diretório base (onde `CMakeLists.txt` se encontra)
 
-``` bash
-mkdir build && cd $_
-cmake ../
-make
-sudo make install
-```
+    mkdir build && cd $_  
+    cmake ../  
+    make  
+    sudo make install  
 
 ###Windows
 + Abra o GUI de `CMake`
@@ -61,6 +59,7 @@ Também estou regularmente no [ClubInvest](http://clubinvest.boards.net).
 
 ##Como ajudar
 A lista seguinte não é exaustiva, qualquer ajuda é bem-vinda.
+
 + Código em forma de patches contra `master` ou _pull requests_.
 + Testar o aplicativo e informar de erros recebidos, erros de compilação, erros de _runtime_.
 + Solicitar funcionalidades que você considere úteis. 
