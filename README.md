@@ -71,4 +71,4 @@ O projeto está distribuído sob a proteção do Gnu GPL v3. Veja o documento [C
 
 ##Agradecimentos
 + _rufuslenhador_ que ajudou em versões prévias com a base de dados `SQLite`
-+ Ao pessoal do [ClubeInvest](http://clubinvest.boards.net)
++ Ao pessoal do [ClubeInvest](http://clubinvest.boards.net) pela ajuda contínua. 
