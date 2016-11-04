@@ -20,8 +20,14 @@
  */
 #ifndef CHART_VIEW_H
 #define CHART_VIEW_H
-#include "QtWidgets"
+#include <QtWidgets>
+#include <QtCharts/QChart>
+#include <QtCharts/QBarSeries>
+#include <QtCharts/QValueAxis>
+#include <QtCharts/QBarCategoryAxis>
 #include "genet_database.h"
+
+QT_CHARTS_USE_NAMESPACE
 
 namespace Genet {
   class ChartView : public QWidget 
@@ -29,21 +35,27 @@ namespace Genet {
     Q_OBJECT
     public:
       ChartView(int cvm, const GenetDatabase &conn, Dfp::FinancialInfoType 
-          type = Dfp::DFP_TYPE_CONSOLIDATED, bool anual = true, 
+          type = Dfp::DFP_FINANCIAL_INFO_CONSOLIDATED, bool anual = true, 
           QWidget *parent = 0);
 
     public slots:
       void setCvm(int);
-      void setAnual(void);
-      void setType(Dfp::DfpFinancialInfoType);
+      void setAnual(bool);
+      void setType(Dfp::FinancialInfoType);
 
     private:
       int cvm;
-      bool anual;
-      Dfp::FinancialInfoType type;
       const GenetDatabase &conn;
+      Dfp::FinancialInfoType type;
+      bool anual;
       QChart *chart;
+      QBarSeries *barSeries;
+      //QValueAxis *yaxis;
+      QBarCategoryAxis *xaxis;
       QGroupBox *group;
+      template <typename Ind>
+      void addRemoveSeries(int state, QBarSet *set, const Ind& ind);
+      void make_emit() const;
   };
 };
 #endif

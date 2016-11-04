@@ -42,6 +42,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 find_package(Qt5Widgets REQUIRED)
+find_package(Qt5Charts REQUIRED)
 find_package(Qt5Concurrent REQUIRED)
 find_package(MySQL REQUIRED)
 find_package(MySQLConnectorCpp REQUIRED)
@@ -97,10 +98,10 @@ add_executable ( genet
   src/genet/balance_model.cpp
   src/genet/balance_view.cpp
   src/genet/date_button_view.cpp
+  src/genet/chart_view.cpp
   )
 
-target_link_libraries ( genet Qt5::Widgets Qt5Concurrent dfp )
-
+target_link_libraries ( genet Qt5::Widgets Qt5::Charts Qt5Concurrent dfp )
 
 install ( TARGETS dfp denet cvmfetch genet
   RUNTIME DESTINATION bin

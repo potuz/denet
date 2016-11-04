@@ -88,7 +88,7 @@ namespace Dfp {
     DFP_INDICATOR_DIVBRPL,
     DFP_INDICATOR_PVP,
     DFP_INDICATOR_DY, 
-    DFP_INDICADOR_PL
+    DFP_INDICATOR_PL
   };
 
   /// Holds a connection to the MySQL database

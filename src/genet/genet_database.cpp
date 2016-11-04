@@ -188,4 +188,5 @@ namespace Genet {
       vector.push_front(QString(res->getString(1).c_str()));
     return vector;
   }
+
 }

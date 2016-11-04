@@ -297,7 +297,7 @@ http://stackoverflow.com/questions/6899025/hide-user-input-on-password-prompt
       { "ROE", DFP_INDICATOR_ROE}, { "ROIC", DFP_INDICATOR_ROIC},
       { "LIQCORR", DFP_INDICATOR_LIQCORR }, 
       { "DIV/PL", DFP_INDICATOR_DIVBRPL}, { "P/VP", DFP_INDICATOR_PVP}, 
-      { "DY", DFP_INDICATOR_DY}, { "PL", DFP_INDICADOR_PL } };
+      { "DY", DFP_INDICATOR_DY}, { "PL", DFP_INDICATOR_PL } };
     unsigned int i = 0;
     Indicator indenum;
     while ( i++ < indicators.size() ) 

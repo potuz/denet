@@ -34,7 +34,8 @@ namespace Dfp {
 namespace Genet { 
 enum {
   INDICATOR_PAGE = 0,
-  BALANCE_PAGE
+  BALANCE_PAGE,
+  CHART_PAGE
 };
 
 class MainWindow : public QMainWindow

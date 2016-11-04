@@ -28,6 +28,7 @@
 #include "import_view.h"
 #include "balance_view.h"
 #include "date_button_view.h"
+#include "chart_view.h"
 
 namespace Genet { 
 MainWindow::MainWindow() : 
@@ -49,7 +50,6 @@ void MainWindow::import()
   ImportView *view = new ImportView(cvm, *conn);
   view->setAttribute(Qt::WA_DeleteOnClose);
   view->exec();
-  delete view;
 }
 
 void MainWindow::setFinancialInfoType (int index)
@@ -277,6 +277,11 @@ void MainWindow::createActions()
       mainStackedWidget->setCurrentIndex(BALANCE_PAGE);});
   connect(dvaAction, &QAction::triggered, [=](){
       dateButton->setEnabled(true);});
+  QAction *chartAction = viewMenu->addAction(tr("&Graficos"));
+  connect(chartAction, &QAction::triggered, [=](){
+      mainStackedWidget->setCurrentIndex(CHART_PAGE);});
+  connect(chartAction, &QAction::triggered, [=](){
+      dateButton->setEnabled(false);});
 
   QMenu *helpMenu = menuBar()->addMenu(tr("&Ajuda"));
   QAction *aboutAction = helpMenu->addAction(tr("&Sobre"), 
@@ -309,6 +314,16 @@ void MainWindow::createActions()
   connect (dateButton, SIGNAL(changedDate(QDate)), balanceView, 
       SIGNAL(changedDate(QDate)));
 
+  ChartView *chartView = new ChartView(cvm, *conn, 
+      financial_info_type, anual ,this);
+  connect ( this, SIGNAL(changedCvm(int)), chartView, 
+      SLOT (setCvm(int)));
+  connect ( this, SIGNAL(changedAnual(bool)), chartView, 
+      SLOT (setAnual(bool)));
+  connect ( this, SIGNAL(changedType(Dfp::FinancialInfoType)), 
+      chartView, SLOT (setType(Dfp::FinancialInfoType)));
+
+
   connect(assetsAction, &QAction::triggered, [=](){
       balanceView->setBalanceType(Dfp::DFP_BALANCE_BPA);});
   connect(liabilitiesAction, &QAction::triggered, [=](){
@@ -326,6 +341,7 @@ void MainWindow::createActions()
 
   mainStackedWidget->addWidget(indicatorView);
   mainStackedWidget->addWidget(balanceView);
+  mainStackedWidget->addWidget(chartView);
   mainStackedWidget->show();
 }
 

@@ -469,7 +469,7 @@ float Dfp::Database::get_indicator ( int cvm,  Dfp::Indicator indicator,
                               if (anual) return ret;
                               else return ret*4;
                             }
-    case DFP_INDICADOR_PL: return f("2.03");
+    case DFP_INDICATOR_PL: return f("2.03");
     default:
                            break;
   }

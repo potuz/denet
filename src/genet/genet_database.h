@@ -58,10 +58,15 @@ namespace Genet {
 
       QStringList get_exercise_list(int cvm) const;
       QDate last_imported_qdate(int cvm) const;
+      template<class Ind>
+        QList<qreal> getSeries(int cvm, bool anual, 
+            Dfp::FinancialInfoType type, const Ind &ind) const;
     private:
       QVector<QVector<QVariant>> process_account_list(int cvm, QDate date,
       bool anual, Dfp::FinancialInfoType type, 
       const std::unique_ptr<sql::ResultSet> res) const;
   };
 }
+
+#include "genet_database_getseries.h"
 #endif
