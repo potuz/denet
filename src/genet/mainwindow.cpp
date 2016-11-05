@@ -163,6 +163,7 @@ void MainWindow::about()
 
 void MainWindow::help()
 {
+  QDesktopServices::openUrl(QUrl("http://www.potuz.net/denet"));
 }
 
 void MainWindow::createActions()
@@ -291,12 +292,10 @@ void MainWindow::createActions()
       dateButton->setEnabled(false);});
 
   QMenu *helpMenu = menuBar()->addMenu(tr("&Ajuda"));
-  QAction *aboutAction = helpMenu->addAction(tr("&Sobre"), 
-      this, &MainWindow::about); 
+  helpMenu->addAction(tr("&Sobre"), this, &MainWindow::about); 
   configureDatabaseAction->setStatusTip(
       tr("Acerca de genet"));
-  QAction *helpAction = helpMenu->addAction(tr("&Ajuda"), 
-      this, &MainWindow::help); 
+  helpMenu->addAction(tr("&Ajuda"), this, &MainWindow::help); 
   configureDatabaseAction->setStatusTip(
       tr("Ajuda"));
 
