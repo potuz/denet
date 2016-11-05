@@ -37,6 +37,7 @@ namespace Genet {
       ChartView(int cvm, const GenetDatabase &conn, Dfp::FinancialInfoType 
           type = Dfp::DFP_FINANCIAL_INFO_CONSOLIDATED, bool anual = true, 
           QWidget *parent = 0);
+      static const int NUM_INDICATORS = 12;
 
     public slots:
       void setCvm(int);
@@ -49,13 +50,13 @@ namespace Genet {
       Dfp::FinancialInfoType type;
       bool anual;
       QChart *chart;
+      std::array<QCheckBox*, NUM_INDICATORS> checkBox;
+      std::array<QBarSet*,NUM_INDICATORS> barSet;
       QBarSeries *barSeries;
-      //QValueAxis *yaxis;
       QBarCategoryAxis *xaxis;
-      QGroupBox *group;
+      void make_emit();
       template <typename Ind>
-      void addRemoveSeries(int state, QBarSet *set, const Ind& ind);
-      void make_emit() const;
+        void addRemoveSeries(int state, QBarSet *set, const Ind& ind);
   };
 };
 #endif
