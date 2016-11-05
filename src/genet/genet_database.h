@@ -54,7 +54,7 @@ namespace Genet {
           Dfp::FinancialInfoType type = Dfp::DFP_FINANCIAL_INFO_CONSOLIDATED)const;
       
       bool setValue(int cvm, const QString &number, const QString &date, 
-          Dfp::FinancialInfoType, QVariant value) const;
+          Dfp::FinancialInfoType, QVariant value, bool comment) const;
 
       QStringList get_exercise_list(int cvm) const;
       QDate last_imported_qdate(int cvm) const;

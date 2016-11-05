@@ -25,6 +25,7 @@
 #include <QDate>
 #include <QVector>
 #include <QVariant>
+#include <QDebug>
 
 namespace Genet {
   GenetDatabase::GenetDatabase (QString host, QString user, QString password)
@@ -146,12 +147,14 @@ namespace Genet {
   }
 
   bool Genet::GenetDatabase::setValue(int cvm, const QString &number, 
-      const QString &date, Dfp::FinancialInfoType type, QVariant value) const
+      const QString &date, Dfp::FinancialInfoType type, QVariant value, 
+      bool comment) const
   {
     std::unique_ptr<sql::Statement> stmt ( conn->createStatement());
     stmt->execute ( "USE denet" );
-    if (value.type() == QVariant::Int)
+    if (!comment)
     {
+      qDebug() << "UPDATE cvm_" << cvm << "SET value=" << value.toInt() << " WHERE number=" << number << " AND date=" << date << " AND financial_info_type=" << type;
       std::unique_ptr<sql::PreparedStatement> prep_stmt (
           conn->prepareStatement( "UPDATE cvm_"+std::to_string(cvm)+ 
             " SET value=? WHERE number=? AND date=? AND financial_info_type=?"));
@@ -160,8 +163,9 @@ namespace Genet {
       prep_stmt->setString(3,date.toStdString().c_str());
       prep_stmt->setInt(4,static_cast<int>(type));
       return prep_stmt->execute(); 
-    } else if (value.type() == QVariant::String)
+    } else
     {
+      qDebug() << "UPDATE cvm_" << cvm << " SET comments=" << value.toString() <<" WHERE number=" << number <<  " AND date=" << date << "AND financial_info_type=" << type;
       std::unique_ptr<sql::PreparedStatement> prep_stmt (
           conn->prepareStatement( "UPDATE cvm_"+std::to_string(cvm)+ 
             " SET comments=? WHERE number=? AND date=? AND financial_info_type=?"));

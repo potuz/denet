@@ -162,12 +162,15 @@ bool Genet::BalanceModel::setData(const QModelIndex &index,
   QModelIndex numberIndex = index.sibling(index.row(), 0);
   auto number = numberIndex.data().toString();
   QString date_str;
+  bool comment = false;
   if (index.column()<5)
     date_str = rootItem->data(index.column()).toString();
   else if (index.column()==5)
+  {
     date_str = rootItem->data(2).toString();
-
-  conn.setValue(cvm, number, date_str, type, index.data());
+    comment = true;
+  }
+  conn.setValue(cvm, number, date_str, type, index.data(), comment);
 
   if (result)
     emit dataChanged(index, index);
