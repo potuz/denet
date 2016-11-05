@@ -75,7 +75,14 @@ void MainWindow::setCompany()
   QString printable = QStringLiteral(
       "Mostrando dados da companhia com cvm %1").arg(cvm);
   statusBar()->showMessage(printable);
-  emit changedCvm(cvm);
+  try { 
+    conn->last_imported_exercise(cvm);
+    emit changedCvm(cvm);
+  } catch ( Dfp::Exception &e )
+  {
+    if (e.getErrorCode() != Dfp::EXCEPTION_NO_EXERCISE)
+      throw;
+  }
 }
 
 void MainWindow::setAnual (int state)
