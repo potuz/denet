@@ -66,6 +66,7 @@ class MainWindow : public QMainWindow
 
 
   private:
+    void report() const;
     void createActions();
     void createStatusBar();
     void readSettings();

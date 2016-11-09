@@ -470,6 +470,11 @@ float Dfp::Database::get_indicator ( int cvm,  Dfp::Indicator indicator,
                               else return ret*4;
                             }
     case DFP_INDICATOR_PL: return f("2.03");
+    case DFP_INDICATOR_REVENUES: return f("3.01");
+    case DFP_INDICATOR_EARNINGS: return f("3.11");
+    case DFP_INDICATOR_COSTS: return f("3.02");
+    case DFP_INDICATOR_BRUTO: return f("3.03");
+    case DFP_INDICATOR_FINANCIAL: return f("3.06");
     default:
                            break;
   }

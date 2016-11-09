@@ -29,6 +29,7 @@
 #include "balance_view.h"
 #include "date_button_view.h"
 #include "chart_view.h"
+#include "report_dialog.h"
 
 namespace Genet { 
 MainWindow::MainWindow() : 
@@ -255,6 +256,9 @@ void MainWindow::createActions()
       mainStackedWidget->setCurrentIndex(INDICATOR_PAGE);});
   connect(indicatorAction, &QAction::triggered, [=](){
       dateButton->setEnabled(false);});
+  QAction *reportAction = viewMenu->addAction(tr("Reporte"));
+  connect(reportAction, &QAction::triggered, this, &MainWindow::report);
+
   QAction *assetsAction = viewMenu->addAction(tr("Balanço &Ativos"));
   connect(assetsAction, &QAction::triggered, [=](){
       mainStackedWidget->setCurrentIndex(BALANCE_PAGE);});
@@ -354,6 +358,19 @@ void MainWindow::createActions()
 void MainWindow::createStatusBar()
 {
   statusBar()->showMessage(tr("Nenhuma companhia selecionada"));
+}
+
+void MainWindow::report() const
+{
+  try {
+    ReportDialog *dialog = new ReportDialog(*conn, cvm, financial_info_type);
+    dialog->show();
+  } catch ( Dfp::Exception &e)
+  { 
+    if (e.getErrorCode() == Dfp::EXCEPTION_NO_EXERCISE)
+      return;
+    throw;
+  }
 }
 
 void MainWindow::readSettings()

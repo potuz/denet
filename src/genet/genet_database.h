@@ -42,6 +42,10 @@ namespace Genet {
       using Dfp::Database::get_indicator;
       int get_indicator (int cvm, QString account_number, bool anual,
           Dfp::FinancialInfoType type) const;
+      int get_indicator (int cvm, QString number, 
+          QDate date, bool anual, Dfp::FinancialInfoType type) const;
+      float get_indicator (int cvm, Dfp::Indicator indicador, QDate date,
+          bool anual, Dfp::FinancialInfoType type) const;
       void tickers(QStringList &codes) const;
       using Dfp::Database::get_cvm_from_ticker_str;
       int get_cvm_from_ticker_str (const QString &str) const;

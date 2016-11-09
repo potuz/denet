@@ -1,9 +1,9 @@
-/*  import_view.h 
+/*  report_dialog.h 
  * 
  *  This file is part of denet. 
  *  denet is a tool to study Bovespa-listed companies. 
  *
- *  Copyright (c) 2016 - Potuz potuz@potuz.net
+ *  Copyright (c) 2016 - Potuz Vader potuz@potuz.net
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,36 +18,27 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef IMPORT_VIEW_INCLUDED
-#define IMPORT_VIEW_INCLUDED
-///\file
+#ifndef REPORT_DIALOG_H
+#define REPORT_DIALOG_H
 #include <QDialog>
-#include <QItemSelectionModel>
-#include <QTreeView>
-namespace Genet { 
+#include <QTextEdit>
+#include "report.h"
+
+namespace Dfp {
+  enum FinancialInfoType : unsigned int;
+}
+
+namespace Genet {
   class GenetDatabase;
-
-  class ImportView : public QDialog 
-  {
+  class ReportDialog : public QDialog {
     Q_OBJECT
-
     public: 
-      ImportView(int cvm, const GenetDatabase &conn, QWidget *parent=0);
-
-    signals:
-      void addText (const QString &str);
-
-    protected slots:
-      void processSelection(const QItemSelection& selected, 
-                                      const QItemSelection& deselected) const;
-      void accept();
-
+      ReportDialog(const GenetDatabase& conn, int cvm, 
+          Dfp::FinancialInfoType type); 
     private:
-      std::string tempPath;
-      QTreeView *view;
-      const GenetDatabase &conn;
-      void import(const QModelIndex &index);
-
+      QTextEdit *editor;
+      void print();
+      Report companyReport;
   };
 }
 #endif

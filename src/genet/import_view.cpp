@@ -142,9 +142,10 @@ void Genet::ImportView::accept()
   #elif defined (__linux)
   tempPath.append("/");
   #endif
+  qDebug() << "ImportView::accept(): " << dir.path();
 
 
-    QFutureWatcher<void> futureWatcher;
+  QFutureWatcher<void> futureWatcher;
   QObject::connect(&futureWatcher, SIGNAL(finished()), dialog, SLOT(reset()));
   QObject::connect(dialog, SIGNAL(canceled()), &futureWatcher, 
       SLOT(cancel()));

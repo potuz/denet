@@ -32,13 +32,31 @@ namespace Genet {
     : Dfp::Database (host.toStdString(), user.toStdString(), 
         password.toStdString()) {}
 
-  int GenetDatabase::get_indicator (int cvm, QString account_number, bool anual,
-      Dfp::FinancialInfoType type) const 
+  int GenetDatabase::get_indicator (int cvm, QString account_number, 
+      bool anual, Dfp::FinancialInfoType type) const 
   { 
     return Dfp::Database::get_indicator (cvm, account_number.toStdString(), 
         anual, type);
   }
+  float GenetDatabase::get_indicator (int cvm, Dfp::Indicator indicador, 
+      QDate date, bool anual, Dfp::FinancialInfoType type) const
+  {
+    std::tm tmDate;
+    tmDate.tm_year = date.year()-1900;
+    tmDate.tm_mon = date.month()-1;
+    tmDate.tm_mday = date.day();
+    return get_indicator(cvm, indicador, tmDate, anual, type);
+  }
 
+  int GenetDatabase::get_indicator (int cvm, QString number, 
+      QDate date, bool anual, Dfp::FinancialInfoType type) const
+  {
+    std::tm tmDate;
+    tmDate.tm_year = date.year()-1900;
+    tmDate.tm_mon = date.month()-1;
+    tmDate.tm_mday = date.day();
+    return get_indicator(cvm, number.toStdString(), tmDate, anual, type);
+  }
   void GenetDatabase::tickers(QStringList &codes) const 
   {
     std::unique_ptr<sql::Statement> stmt ( conn->createStatement());

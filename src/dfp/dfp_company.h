@@ -72,7 +72,7 @@ namespace Dfp {
           const std::string email_,
           const std::string address_city_, const std::string address_state_, 
           const std::string address_country_, 
-          const Dfp::Database &conn_ ) : cvm ( cvm_ ), 
+          const Dfp::Database &conn_ ) : cvm ( cvm_ ), name(name_),
       sector (sector_), cnpj (cnpj_), tickers (tickers_), 
       bovespa_segment (bovespa_segment_), situation (situation_), 
       email (email_),
@@ -97,6 +97,9 @@ namespace Dfp {
       float get_indicator ( Dfp::Indicator indicator, bool anual) const;
       float get_indicator ( Dfp::Indicator indicator, 
           Dfp::FinancialInfoType type ) const;
+
+      std::string getName() const;
+      std::string getSector() const;
   };
 }
 #endif

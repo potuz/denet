@@ -65,3 +65,14 @@ void Dfp::Company::create_table () const
   conn.create_table(cvm);
 }
 
+
+std::string Dfp::Company::getName() const
+{
+  return name;
+}
+
+std::string Dfp::Company::getSector() const
+{
+  return sector;
+}
+
