@@ -287,8 +287,10 @@ void Dfp::CvmFile::import (const Dfp::Database &conn) {
       "temporary directory");
   temporary_path.append ("/");
   #endif
-  debug_log ("About to unzip " + filename + " to " + temporary_path + ".\n");
+  debug_log ("CvmFile::import(): About to unzip " + filename + " to " 
+      + temporary_path + ".\n");
   unzip ( temporary_path );
+  debug_log ("CvmFile::import() unzipped file, parsing xml...\n");
 
   pugi::xml_document xmldoc;
   std::string xmlfilename = temporary_path + needed_files[0]; // Documento.xml
@@ -300,11 +302,14 @@ void Dfp::CvmFile::import (const Dfp::Database &conn) {
       xmldoc.child("Documento").child_value("CodigoEscalaQuantidade") );
   money_scale = 1999 - money_scale * 999; 
   quant_scale = 1999 - quant_scale * 999;
+  debug_log("CvmFile::import() parsed Documento.xml: " + 
+      std::to_string(money_scale) + "\n About to parse " + 
+      "ComposicaoCapital...\n" );
   xmlfilename = temporary_path + needed_files[1]; // Composicao...
   if (!xmldoc.load_file ( xmlfilename.c_str() )) throw std::runtime_error (
       needed_files[1] + ": Cannot open XML" );
   for ( int i = 0; i < 6; i++ ) {
-    acct.value = std::stoi (
+    acct.value = std::stoll (
         xmldoc.child("ArrayOfComposicaoCapitalSocialDemonstracaoFinanceira").\
         child("ComposicaoCapitalSocialDemonstracaoFinanceira").\
         child_value(share_number_string[i].c_str() ) );
@@ -315,6 +320,8 @@ void Dfp::CvmFile::import (const Dfp::Database &conn) {
     acct.name = share_number_string[i];
     acct.comments = "";
     acct.date = date_str;
+    debug_log("CvmFile::import() in shares loop. Sending account " + 
+        acct.name + " : " + std::to_string(acct.value));
     conn.import_account (cvm, acct);
   }
   xmlfilename = temporary_path + needed_files[2]; // InfoFinaDFin
@@ -418,6 +425,7 @@ void Dfp::CvmFile::import (const Dfp::Database &conn) {
     std::string removable = temporary_path + *r;
     debug_log ( "CvmFile::import about to remove " + removable + "\n");
     std::remove ( removable.c_str() );
+    debug_log ( "CvmFile::removed " + removable + "\n");
   }
   std::remove ( temporary_path.c_str() );
   company.add_revision ( revision, exercise );

@@ -374,11 +374,21 @@ float Dfp::Database::get_indicator ( int cvm,  Dfp::Indicator indicator,
           std::vector<Dfp::Ticker> tickers = company.get_tickers();
           if ( std::find_if ( tickers.begin(), tickers.end(), find_ticker (
                   DFP_TICKER_PN ) ) != tickers.end() ) 
-            return 
-              (get_indicator( cvm, "1.89.01", exercise) * 
+          {
+            try {
+            long long value = (get_indicator( cvm, "1.89.01", exercise) * 
                get_indicator( cvm, "1.90.03", exercise) + 
                get_indicator( cvm, "1.89.02", exercise) *
                get_indicator( cvm, "1.90.04", exercise) ) / 100;
+
+            return (float) value;
+            } catch ( std::invalid_argument &e )
+            {
+              return 
+                get_indicator( cvm, "1.89.02", exercise) * 
+                get_indicator( cvm, "1.90.04", exercise) /100;
+            }
+          }
           else if ( std::find_if ( tickers.begin(), tickers.end(), 
                 find_ticker (DFP_TICKER_PNA ) ) != tickers.end() )
             return 
@@ -560,7 +570,8 @@ void Dfp::Database::import_account ( int cvm,
   std::unique_ptr<sql::PreparedStatement> prep_stmt (
       conn->prepareStatement( "INSERT INTO cvm_" + std::to_string (cvm) + 
         " VALUES ( ?, ?, ?, ?, ?, ? , ? )" ) );
-  debug_log ( "About to import values " + acct.number + ", " + acct.name + 
+  debug_log ( "Database::import_account() About to import values " + 
+      acct.number + ", " + acct.name + 
       ", " + acct.date + "...\n" );
   prep_stmt->setString (1, acct.number);
   prep_stmt->setString (2, acct.name);
