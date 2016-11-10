@@ -25,8 +25,9 @@
 #include <locale>
 #include "ezOptionParser/ezOptionParser.hpp"
 #include "dfp_exception.h"
-#ifdef _WIN32
-nada          
+#ifdef _WIN32     
+#define _WINSOCKAPI_
+#include <windows.h>
 #elif defined (__linux)
 #include "termios.h" // To hide passwords on the terminal
 #include "unistd.h"
@@ -149,17 +150,24 @@ back_to_question:
                    for (int i = 0; i < 3 ; i++) { 
                      std::cout << "Senha: ";
                      #ifdef _WIN32
-http://stackoverflow.com/questions/6899025/hide-user-input-on-password-prompt  
+					 HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
+					 DWORD mode = 0;
+					 GetConsoleMode(hStdin, &mode);
+					 SetConsoleMode(hStdin, mode & (~ENABLE_ECHO_INPUT));
                      #elif defined (__linux)
                      termios oldt;
                      tcgetattr(STDIN_FILENO, &oldt);
                      termios newt = oldt;
                      newt.c_lflag &= ~ECHO;
                      tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+#endif
                      getline (std::cin, rootpasswd);
                      std::cout << "\nReitere a senha: ";
                      std::string recheck;
                      getline (std::cin, recheck);
+#ifdef _WIN32
+					 SetConsoleMode(hStdin, mode);
+#elif defined (__linux)
                      tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
                      #endif
                      if ( recheck.compare(rootpasswd) ) 
@@ -178,19 +186,26 @@ http://stackoverflow.com/questions/6899025/hide-user-input-on-password-prompt
                    for (int i = 0; i < 3 ; i++) { 
                      std::cout << "Digite a nova senha: ";
                      #ifdef _WIN32
-                     nada;
+					 HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
+					 DWORD mode = 0;
+					 GetConsoleMode(hStdin, &mode);
+					 SetConsoleMode(hStdin, mode & (~ENABLE_ECHO_INPUT));
                      #elif defined (__linux)
                      termios oldt;
                      tcgetattr(STDIN_FILENO, &oldt);
                      termios newt = oldt;
                      newt.c_lflag &= ~ECHO;
                      tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+#endif 
                      getline (std::cin, denetpwd);
                      std::cout << "\nReitere a senha: ";
                      std::string recheck;
                      getline (std::cin, recheck);
+#ifdef _WIN32
+					 SetConsoleMode(hStdin, mode);
+#elif defined(__linux)
                      tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-                     #endif
+#endif
                      if ( recheck.compare(denetpwd) ) 
                        std::cout << "As senhas inseridas não conferem. Tente novamente.\n";
                      else break;

@@ -3,9 +3,16 @@ project (denet VERSION 1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 set(CMAKE_INSTALL_PREFIX "/usr")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-switch-enum" )
-set(CMAKE_CXX_FLAGS_DEBUG 
+if(WIN32)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall" )
+	set(CMAKE_CXX_FLAGS_DEBUG 
+  "${CMAKE_CXX_FLAGS_DEBUG} -Wall" )
+else(WIN32)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-switch-enum" )
+	set(CMAKE_CXX_FLAGS_DEBUG 
   "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wno-switch-enum" )
+endif(WIN32)
+
 configure_file ( README.md.in "${CMAKE_SOURCE_DIR}/README.md")
 if(${CMAKE_BUILD_TYPE} STREQUAL "DEBUG")
   set ( DATAFILE_PATH "${PROJECT_BINARY_DIR}/" )
@@ -36,6 +43,19 @@ else(${CMAKE_BUILD_TYPE} STREQUAL "DEBUG")
   set ( DATAFILE_PATH "${CMAKE_INSTALL_PREFIX}/share/denet/" )
 endif(${CMAKE_BUILD_TYPE} STREQUAL "DEBUG")
 
+if(WIN32)
+	set(MYPRG "PROGRAMFILES(x86)")
+	set(CMAKE_PREFIX_PATH "C:\\Qt\\5.7\\msvc2015_64\\")
+	set(CMAKE_INCLUDE_PATH "$ENV{${MYPRG}}" 
+		"$ENV{${MYPRG}}/libarchive/include/"
+		"$ENV{${MYPRG}}/curl/" )
+	set(CMAKE_LIBRARY_PATH "$ENV{${MYPRG}}"
+	       	"$ENV{${MYPRG}}/libarchive/lib/"
+		"$ENV{${MYPRG}}/curl/lib/.libs/")
+	set(CURL_INCLUDE_DIRS  "$ENV{${MYPRG}}/curl/include" )
+	set(CURL_LIBRARY "$ENV{${MYPRG}}/curl/lib/.libs/libcurl-4.dll" )
+endif(WIN32)
+
 configure_file ( src/config.h.in "${PROJECT_BINARY_DIR}/config.h" )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -47,9 +67,15 @@ find_package(Qt5Charts REQUIRED)
 find_package(Qt5Concurrent REQUIRED)
 find_package(MySQL REQUIRED)
 find_package(MySQLConnectorCpp REQUIRED)
+message("Found MySQLConnectorCpp")
+message("MYSQLCONNECTORCPP_INCLUDE_DIRS: " ${MYSQLCONNECTORCPP_INCLUDE_DIRS})
+message("MYSQLCONNECTORCPP_INCLUDE_LIBRARIES: " ${MYSQLCONNECTORCPP_LIBRARIES})
 find_package(LibArchive REQUIRED)
 find_package(CURL REQUIRED)
-
+if(WIN32)
+set(BOOST_ROOT "C:\Program Files (x86)\boost_1_62_0")
+find_package(Boost REQUIRED)
+endif(WIN32)
 add_library (dfp SHARED 
   src/pugixml/pugixml.cpp 
   src/dfp/dfp_cvm_connection.cpp 
@@ -66,24 +92,33 @@ set_target_properties (dfp PROPERTIES VERSION ${dfp_VERSION_STRING}
 target_include_directories(dfp 
   PRIVATE 
   ${MYSQL_INCLUDE_DIRS}
-  ${MYSQLCONNECTORCPP_INCLUDES} ${LibArchive_INCLUDE_DIRS} 
-  ${CURL_INCLUDE_DIRS} ${PROJECT_BINARY_DIR}
+  ${MYSQLCONNECTORCPP_INCLUDE_DIRS}
+  ${LibArchive_INCLUDE_DIRS} 
+  ${CURL_INCLUDE_DIRS} 
+  ${PROJECT_BINARY_DIR}
   PUBLIC 
   "${CMAKE_SOURCE_DIR}/src/dfp"
   "${CMAKE_SOURCE_DIR}/src" 
   )
+if(WIN32)
+	target_include_directories(dfp
+		PUBLIC
+		${Boost_INCLUDE_DIRS})
+endif(WIN32)
 target_link_libraries(dfp  ${MYSQL_LIBRARIES} ${CURL_LIBRARIES}
   ${MYSQLCONNECTORCPP_LIBRARIES} ${LibArchive_LIBRARIES})
 
 
 add_executable (denet src/denet/denet.cpp)
 target_link_libraries (denet dfp)
-target_include_directories (denet PRIVATE ${PROJECT_BINARY_DIR})
+target_include_directories (denet PRIVATE ${PROJECT_BINARY_DIR} 
+	${MYSQLCONNECTORCPP_INCLUDE_DIRS} 
+	"${CMAKE_SOURCE_DIR}/src/ezOptionParser")
 
 add_executable (cvmfetch src/cvmfetch/cvmfetch.cpp)
 target_link_libraries (cvmfetch dfp)
-target_include_directories (cvmfetch PRIVATE ${PROJECT_BINARY_DIR})
-
+target_include_directories (cvmfetch PRIVATE ${PROJECT_BINARY_DIR} 
+	${MYSQLCONNECTORCPP_INCLUDE_DIRS})
 add_executable ( genet 
   src/genet/genet.cpp 
   src/genet/mainwindow.cpp 
@@ -103,6 +138,10 @@ add_executable ( genet
   src/genet/report.cpp
   src/genet/report_dialog.cpp
   )
+target_include_directories(genet
+	PRIVATE
+	${MYSQLCONNECTORCPP_INCLUDE_DIRS}
+	${MYSQL_INCLUDE_DIRS})
 
 target_link_libraries ( genet Qt5::Widgets
   Qt5::Charts 

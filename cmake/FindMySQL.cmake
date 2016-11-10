@@ -25,16 +25,17 @@
 #  License text for the above reference.)
 
 if( WIN32 )
+	set(MYPRG "PROGRAMFILES(x86)")
 	find_path( MYSQL_INCLUDE_DIR
 		NAMES "mysql.h"
 		PATHS "$ENV{PROGRAMFILES}/MySQL/*/include"
-			  "$ENV{PROGRAMFILES(x86)}/MySQL/*/include"
+		"$ENV{${MYPRG}}/MySQL/*/include"
 			  "$ENV{SYSTEMDRIVE}/MySQL/*/include" )
 	
 	find_library( MYSQL_LIBRARY
 		NAMES "mysqlclient" "mysqlclient_r"
 		PATHS "$ENV{PROGRAMFILES}/MySQL/*/lib"
-			  "$ENV{PROGRAMFILES(x86)}/MySQL/*/lib"
+		"$ENV{${MYPRG}}/MySQL/*/lib"
 			  "$ENV{SYSTEMDRIVE}/MySQL/*/lib" )
 else()
 	find_path( MYSQL_INCLUDE_DIR
@@ -74,5 +75,5 @@ find_package_handle_standard_args( MYSQL DEFAULT_MSG
 set( MYSQL_INCLUDE_DIRS ${MYSQL_INCLUDE_DIR} )
 set( MYSQL_LIBRARIES ${MYSQL_LIBRARY} )
 
-mark_as_advanced( MYSQL_INCLUDE_DIR MYSQL_LIBRARY )
+#mark_as_advanced( MYSQL_INCLUDE_DIR MYSQL_LIBRARY )
 

@@ -29,6 +29,11 @@
 #include "dfp_database.h" 
 #include "dfp_company.h"
 #include "dfp_utils.h"
+#ifdef _WIN32
+#define _WINSOCKAPI_
+#include <Windows.h>
+#include <tchar.h>
+#endif
 #include <curl/curl.h>
 
 namespace {
@@ -275,7 +280,11 @@ void Dfp::CvmFile::import (const Dfp::Database &conn) {
   //TODO: use <filesystem> when available in GCC5. 
   std::string temporary_path;
   #ifdef _WIN32
-  nada;
+  TCHAR lpTempPathBuffer[100];
+  DWORD dwRetVal = 0;
+  dwRetVal = GetTempPath(100, lpTempPathBuffer);
+  std::string temporary_path;
+  temporary_path.assign(lpTempPathBuffer);
   #elif defined (__linux)
   const char* tmpdir = getenv ("TMPDIR");
   if ( tmpdir ) 
