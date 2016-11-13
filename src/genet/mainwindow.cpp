@@ -231,6 +231,16 @@ void MainWindow::createActions()
   emptySpace3->setMinimumWidth(20);
   dbToolBar->addWidget(emptySpace3);
 
+
+  const QIcon reportIcon = QIcon::fromTheme("document-open", QIcon (
+        IMAGEFILE_PATH"document-open-symbolic.png"));
+  QAction *reportAction = new QAction(reportIcon, tr("&Reporte"), this);
+  reportAction->setStatusTip(tr("Gera um reporte com a evolução dos"
+        " principais indicadores"));
+  connect(reportAction, &QAction::triggered, this, &MainWindow::report);
+  dbToolBar->addAction(reportAction);
+
+
   const QIcon importIcon = QIcon::fromTheme("document-save", QIcon (
         IMAGEFILE_PATH"document-save.png"));
   QAction *importAction = new QAction(importIcon, tr("&Importar"), this);
@@ -250,14 +260,12 @@ void MainWindow::createActions()
   dbToolBar->addAction(quitAction);
 
   QMenu *viewMenu = menuBar()->addMenu(tr("&Ver"));
-//  QAction *summaryAction = viewMenu->AddAction(tr("&Resumo"));
   QAction *indicatorAction = viewMenu->addAction(tr("&Indicadores"));
   connect(indicatorAction, &QAction::triggered, [=](){
       mainStackedWidget->setCurrentIndex(INDICATOR_PAGE);});
   connect(indicatorAction, &QAction::triggered, [=](){
       dateButton->setEnabled(false);});
-  QAction *reportAction = viewMenu->addAction(tr("Reporte"));
-  connect(reportAction, &QAction::triggered, this, &MainWindow::report);
+  viewMenu->addAction(reportAction);
 
   QAction *assetsAction = viewMenu->addAction(tr("Balanço &Ativos"));
   connect(assetsAction, &QAction::triggered, [=](){

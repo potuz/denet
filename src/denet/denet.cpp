@@ -26,7 +26,6 @@
 #include "ezOptionParser/ezOptionParser.hpp"
 #include "dfp_exception.h"
 #ifdef _WIN32     
-#define _WINSOCKAPI_
 #include <windows.h>
 #elif defined (__linux)
 #include "termios.h" // To hide passwords on the terminal

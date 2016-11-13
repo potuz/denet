@@ -22,9 +22,6 @@
 #include <sstream>
 #include <algorithm>
 #include "dfp_company.h"
-#ifdef _WIN32
-#define _WINSOCKAPI_
-#endif
 #include "mysql_driver.h"
 #include "cppconn/statement.h"	// sql::Statement
 #include "cppconn/prepared_statement.h"

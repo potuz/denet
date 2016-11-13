@@ -21,10 +21,6 @@
 #include <string>
 #include <fstream>
 #include <sstream>
-#ifdef _WIN32
-#define _WINSOCKAPI_
-#include<Windows.h>
-#endif
 #include <curl/curl.h>
 #include <regex>
 #include "dfp_utils.h"

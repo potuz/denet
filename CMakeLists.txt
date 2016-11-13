@@ -27,6 +27,8 @@ if(${CMAKE_BUILD_TYPE} STREQUAL "DEBUG")
     "${PROJECT_BINARY_DIR}/tickers.csv" COPYONLY)
   configure_file ( data/companies.csv
     "${PROJECT_BINARY_DIR}/companies.csv" COPYONLY)
+  configure_file ( src/genet/images/document-open-symbolic.png
+    "${PROJECT_BINARY_DIR}/images/document-open-symbolic.png" COPYONLY)
   configure_file ( src/genet/images/document-save.png
     "${PROJECT_BINARY_DIR}/images/document-save.png" COPYONLY)
   configure_file ( src/genet/images/banner.png
@@ -158,6 +160,7 @@ install ( FILES data/companies.csv data/tickers.csv COPYING
 install ( FILES 
   src/genet/images/application-exit.png
   src/genet/images/document-save.png
+  src/genet/images/document-open-symbolic.png
   src/genet/images/banner.png
   src/genet/images/background.png
   src/genet/images/watermark1.png

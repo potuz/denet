@@ -22,7 +22,6 @@
 #include "dfp_database.h"
 #include "dfp_exception.h"
 #ifdef _WIN32
-#define _WINSOCKAPI_
 #include <Windows.h>
 #include <tchar.h>
 #endif

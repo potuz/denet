@@ -30,7 +30,6 @@
 #include "dfp_company.h"
 #include "dfp_utils.h"
 #ifdef _WIN32
-#define _WINSOCKAPI_
 #include <Windows.h>
 #include <tchar.h>
 #endif
