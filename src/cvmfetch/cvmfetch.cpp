@@ -258,6 +258,7 @@ int main (int argc, const char * argv[] ) {
         true, temporary_path );
     process_available_files ( conn, cvm, DFP_CVM_FILE_FRE, 
         true, temporary_path );
+    return 0;
   }
 
   std::cerr << "ERRO: pelo menos uma de \"-D\", \"-d\" ou \"-l\"  "
