@@ -34,12 +34,15 @@ Genet::ReportDialog::ReportDialog(const GenetDatabase& conn, int cvm,
   editor = new QTextEdit(this);
   auto okButton = new QPushButton(tr("&Ok"));
   auto printButton = new QPushButton(tr("&Imprimir"));
+  auto htmlButton = new QPushButton(tr("&Guardar"));
   okButton->setDefault(true);
   connect (okButton, &QAbstractButton::clicked, this, &QDialog::accept);
   connect (printButton, &QAbstractButton::clicked,this,&ReportDialog::print);
+  connect (htmlButton, &QAbstractButton::clicked,this,&ReportDialog::saveHtml);
   auto hlayout = new QHBoxLayout;
   auto empty = new QWidget;
   hlayout->addWidget(empty,2);
+  hlayout->addWidget(htmlButton);
   hlayout->addWidget(printButton);
   hlayout->addWidget(okButton);
   auto layout = new QVBoxLayout(this);
@@ -69,5 +72,25 @@ void Genet::ReportDialog::print()
     }
     editor->print(&printer);
 #endif
+}
+
+void Genet::ReportDialog::saveHtml()
+{
+  QString htmlName = QFileDialog::getSaveFileName(this, 
+      tr("Guardar reporte html"), "/tmp", tr("Arquivos html (*.html)"));
+
+  QFileDialog fileDialog(this, tr("Guardar como..."));
+  fileDialog.setAcceptMode(QFileDialog::AcceptSave);
+  QStringList mimeTypes;
+  mimeTypes << "text/html" << "text/plain" << "application/vnd.oasis.opendocument.text";
+  fileDialog.setMimeTypeFilters(mimeTypes);
+  fileDialog.setDefaultSuffix("html");
+  if (fileDialog.exec() != QDialog::Accepted)
+    return;
+  const QString fileName = fileDialog.selectedFiles().first();
+
+  QTextDocumentWriter writer(fileName);
+
+  writer.write(editor->document());
 }
 

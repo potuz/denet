@@ -38,6 +38,7 @@ namespace Genet {
     private:
       QTextEdit *editor;
       void print();
+      void saveHtml();
       Report companyReport;
   };
 }
