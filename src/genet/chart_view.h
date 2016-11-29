@@ -25,6 +25,7 @@
 #include <QtCharts/QBarSeries>
 #include <QtCharts/QValueAxis>
 #include <QtCharts/QBarCategoryAxis>
+#include <array>
 #include "genet_database.h"
 
 QT_CHARTS_USE_NAMESPACE

@@ -58,7 +58,7 @@ namespace {
             rgx ) )  break;
     }
     urldata.temporary_path.append ( match_filename[1] );
-    urldata.cvmfile.open ( urldata.temporary_path );
+    urldata.cvmfile.open ( urldata.temporary_path, std::ios_base::binary );
   }
   size_t header_cb(char *contents, size_t size, size_t nmemb, 
       CvmUrlData  * urldata)
@@ -197,7 +197,6 @@ namespace Dfp {
             curl_write_cb);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &urldata);
         curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-
         res = curl_easy_perform(curl);
         if(res != CURLE_OK) throw 
           Dfp::Exception ( curl_easy_strerror(res), EXCEPTION_NO_INTERNET);

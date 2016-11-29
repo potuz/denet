@@ -33,6 +33,7 @@ namespace Genet {
     addPage(new UserPage);
     addPage(new ConclusionPage);
 
+    setWizardStyle(QWizard::ModernStyle);
     setPixmap(QWizard::BannerPixmap, QPixmap(
           IMAGEFILE_PATH"banner.png"));
     setPixmap(QWizard::BackgroundPixmap, QPixmap(

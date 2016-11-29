@@ -22,15 +22,27 @@
 #include "config.h"
 
 void Dfp::debug_log ( const std::string& str ) { 
-  #ifndef NDEBUG
+  #ifndef NDEBUG 
   std::cerr << str;
   #endif
 }
 void Dfp::setup_dbase ( const std::string & user, const std::string &passwd,
     const std::string &host, const std::string &denetpwd ) {
   sql::Driver *driver (sql::mysql::get_driver_instance()); 
+  try {
+#ifdef _WIN32
+  sql::ConnectOptionsMap connection_properties;
+  connection_properties["OPT_LOCAL_INFILE"]=1;
+  connection_properties["hostName"]=host;
+  connection_properties["userName"]=user;
+  connection_properties["password"]=passwd;
+  std::unique_ptr<sql::Connection> conn ( 
+      driver->connect(connection_properties) );
+#else
   std::unique_ptr<sql::Connection> conn ( 
       driver->connect(host, user, passwd) );
+#endif
+
   std::unique_ptr<sql::Statement> stmt (
       conn->createStatement ());
   std::unique_ptr< sql::ResultSet> res (stmt->executeQuery (
@@ -56,18 +68,39 @@ void Dfp::setup_dbase ( const std::string & user, const std::string &passwd,
       "ticker VARCHAR(12) DEFAULT NULL, "
       "class INT NOT NULL, "
       "PRIMARY KEY (cvm, class) )" );
+#ifdef _WIN32
+  try { stmt->execute ( "LOAD DATA LOCAL INFILE \'"
+      DATAFILE_PATH"companies.csv\'"
+      " INTO TABLE companies FIELDS TERMINATED BY \',\'"
+      " OPTIONALLY ENCLOSED BY \'\"\'"
+      " ESCAPED BY \'\\\\\'"
+      " LINES TERMINATED BY \'\\r\\n\'" );
+  } catch (sql::SQLException &e) {
+	  std::cerr << e.what();
+  }
   stmt->execute ( "LOAD DATA LOCAL INFILE \'"
+      DATAFILE_PATH"tickers.csv\'"
+      " INTO TABLE tickers FIELDS TERMINATED BY \',\'"
+      " OPTIONALLY ENCLOSED BY \'\"\'"
+      " ESCAPED BY \'\\\\\'"
+      " LINES TERMINATED BY \'\\r\\n\'" );
+#else 
+  try { stmt->execute ( "LOAD DATA LOCAL INFILE \'"
       DATAFILE_PATH"companies.csv\'"
       " INTO TABLE companies FIELDS TERMINATED BY \',\'"
       " OPTIONALLY ENCLOSED BY \'\"\'"
       " ESCAPED BY \'\\\\\'"
       " LINES TERMINATED BY \'\\n\'" );
+  } catch (sql::SQLException &e) {
+	  std::cerr << e.what();
+  }
   stmt->execute ( "LOAD DATA LOCAL INFILE \'"
       DATAFILE_PATH"tickers.csv\'"
       " INTO TABLE tickers FIELDS TERMINATED BY \',\'"
       " OPTIONALLY ENCLOSED BY \'\"\'"
       " ESCAPED BY \'\\\\\'"
       " LINES TERMINATED BY \'\\n\'" );
+#endif
   res.reset ( stmt->executeQuery( "SELECT SUBSTRING_INDEX(CURRENT_USER(),"
         "\'@\',-1)"));
   res->next();
@@ -75,6 +108,12 @@ void Dfp::setup_dbase ( const std::string & user, const std::string &passwd,
       "IDENTIFIED BY \'" + denetpwd + "\'");
   stmt->execute ("GRANT ALL ON denet.* TO denet@\'"+res->getString(1)+
       "\' IDENTIFIED BY \'" + denetpwd + "\'");
+
+  } catch (sql::SQLException &e )
+  {
+	  std::cerr << e.what();
+	  return;
+  }
 } 
 
 

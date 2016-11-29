@@ -119,12 +119,17 @@ int Dfp::Database::last_imported_revision (int cvm, std::tm tm) const
 };
 
 void Dfp::Database::add_revision (int cvm, int revision, std::tm tm ) const
-{ 
+{
+  debug_log("Dfp::Database::add_revision()");
   std::unique_ptr< sql::Statement> stmt ( conn->createStatement());
   stmt->execute ( "USE denet" );
   std::string date_str = tm_to_string ( tm );
-  stmt->execute ( "INSERT INTO revisions VALUES (\"" + std::to_string (cvm) + 
-      "\", \"" + date_str + "\", \"" + std::to_string (revision ) + "\")" );
+  std::unique_ptr< sql::PreparedStatement> prep_stmt ( conn->prepareStatement (
+        "INSERT INTO revisions VALUES (?,?,?)")); 
+  prep_stmt->setInt (1, cvm);
+  prep_stmt->setDateTime (2,date_str.c_str());
+  prep_stmt->setInt (3,revision);
+  prep_stmt->execute();
   stmt->execute ( "DELETE FROM cvm_" + std::to_string (cvm) + 
       " WHERE number LIKE \"3.99\%\"");
 };

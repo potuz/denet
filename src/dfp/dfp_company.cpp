@@ -17,6 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "dfp_company.h"
+#include "dfp_utils.h"
 
 int Dfp::Company::last_imported_revision ( std::tm tm ) const
 {
@@ -25,6 +26,7 @@ int Dfp::Company::last_imported_revision ( std::tm tm ) const
 
 void Dfp::Company::add_revision ( int revision, std::tm tm ) const
 {
+  debug_log("Dfp::Company::add_revision()\n");
   conn.add_revision (cvm, revision, tm );
 }
 

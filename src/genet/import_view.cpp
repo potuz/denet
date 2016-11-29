@@ -124,8 +124,16 @@ void Genet::ImportView::import(const QModelIndex &index)
       }
 
   std::string filename = Dfp::Cvm::download (protocol, tempPath);
+  qDebug() << "Genet::ImportView::import(): creating " << QString::fromStdString(filename);
   Dfp::CvmFile cvmFile (filename);
-  cvmFile.import(*conn_);
+  qDebug() << "Genet::ImportView::import(): importing " << QString::fromStdString(filename);
+  try { 
+	  cvmFile.import(*conn_);
+	  qDebug() << "Genet::ImportView::import() imported.";
+  } catch ( Dfp::Exception &e) {
+	  qDebug() << "Genet::ImportView::import(): Dfp::Exception: " << e.what();
+	  throw;
+  }
 }
 
 void Genet::ImportView::accept() 
@@ -137,11 +145,7 @@ void Genet::ImportView::accept()
   QTemporaryDir dir; 
   if (!dir.isValid()) throw std::runtime_error ("Can't create dir\n");
   tempPath = dir.path().toStdString();
-  #ifdef _WIN32  
-  tempPath.append("\\");
-  #elif defined (__linux)
   tempPath.append("/");
-  #endif
   qDebug() << "ImportView::accept(): " << dir.path();
 
 

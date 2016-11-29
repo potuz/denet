@@ -17,6 +17,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "dfp_exception.h"
+#include <curl/curl.h>
+#ifdef _WIN32
+#include <Windows.h>
+#include <tchar.h>
+#endif
 #include <archive.h>
 #include <archive_entry.h>
 #include <stdexcept>
@@ -29,11 +34,6 @@
 #include "dfp_database.h" 
 #include "dfp_company.h"
 #include "dfp_utils.h"
-#ifdef _WIN32
-#include <Windows.h>
-#include <tchar.h>
-#endif
-#include <curl/curl.h>
 
 namespace {
   enum DfpScale {
@@ -222,14 +222,31 @@ Dfp::CvmFile::CvmFile (const std::string& name) {
 void Dfp::CvmFile::import (const Dfp::Database &conn) { 
   Dfp::DatabaseAccount acct; 
 
-  if ( type != DFP_CVM_FILE_DFP && type != DFP_CVM_FILE_ITR ) return;
+  Dfp::debug_log("Dfp::CvmFile::import()");
+  if ( type != DFP_CVM_FILE_DFP && type != DFP_CVM_FILE_ITR ) {
+	  debug_log ("CvmFile::import(): invalid file");
+	  return;
+  }
   Dfp::Company company = conn.get_company_from_cvm (cvm); 
-  int last_revision =  company.last_imported_revision (exercise);
+  int last_revision;
+  try { 
+	  last_revision  =  company.last_imported_revision (exercise); 
+	  debug_log ("CvmFile::import() last_revision: ");
+	  debug_log (std::to_string(last_revision));
+  } catch (Dfp::Exception &e) {
+	debug_log( "CvmFile::import() add revision throws: ");
+	debug_log( e.what() );
+	throw;
+  }
+
   if ( revision <= last_revision ) return;
   if ( last_revision > 0 ) {
     company.delete_exercise ( exercise );
   }
-  else company.create_table ();
+  else {
+	  Dfp::debug_log("Creating table");
+	  company.create_table ();
+  }
 
   //TODO Do this with <iomanip> when available 
   std::string date_str;
@@ -268,8 +285,10 @@ void Dfp::CvmFile::import (const Dfp::Database &conn) {
       curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
       curl_easy_setopt(curl, CURLOPT_WRITEDATA, &acct.value);
       res = curl_easy_perform(curl);
-      if(res != CURLE_OK) 
+      if(res != CURLE_OK) {
+	      Dfp::debug_log ("pingo!"); 
         throw Dfp::Exception ( curl_easy_strerror(res), EXCEPTION_NO_INTERNET);
+      }
       conn.import_account ( cvm, acct ); 
     } 
     curl_easy_cleanup(curl);
@@ -280,10 +299,13 @@ void Dfp::CvmFile::import (const Dfp::Database &conn) {
   std::string temporary_path;
   #ifdef _WIN32
   TCHAR lpTempPathBuffer[100];
-  DWORD dwRetVal = 0;
-  dwRetVal = GetTempPath(100, lpTempPathBuffer);
-  std::string temporary_path;
-  temporary_path.assign(lpTempPathBuffer);
+  TCHAR tempFileName[100];
+  GetTempPath(100, lpTempPathBuffer);
+  GetTempFileName(lpTempPathBuffer, "dfp", 0, tempFileName);
+  DeleteFile(tempFileName);
+  CreateDirectory (tempFileName, NULL);
+  temporary_path.assign(tempFileName);
+  Dfp::debug_log("Temporary Path: " + temporary_path);
   #elif defined (__linux)
   const char* tmpdir = getenv ("TMPDIR");
   if ( tmpdir ) 
@@ -293,8 +315,8 @@ void Dfp::CvmFile::import (const Dfp::Database &conn) {
   temporary_path.append( "/denet-XXXXXX");
   if (!mkdtemp( &temporary_path[0]) ) throw std::runtime_error ("Cannot create "
       "temporary directory");
-  temporary_path.append ("/");
   #endif
+  temporary_path.append ("/");
   debug_log ("CvmFile::import(): About to unzip " + filename + " to " 
       + temporary_path + ".\n");
   unzip ( temporary_path );
@@ -429,13 +451,24 @@ void Dfp::CvmFile::import (const Dfp::Database &conn) {
   }
   std::vector<std::string>::const_iterator r; 
   for (r = needed_files.begin(); r != needed_files.end(); ++r ) {
-    //    r->insert (0, temporary_path); 
     std::string removable = temporary_path + *r;
     debug_log ( "CvmFile::import about to remove " + removable + "\n");
     std::remove ( removable.c_str() );
     debug_log ( "CvmFile::removed " + removable + "\n");
   }
+#ifdef _WIN32
+  RemoveDirectory(temporary_path.c_str() );
+#elif defined (__linux)
   std::remove ( temporary_path.c_str() );
-  company.add_revision ( revision, exercise );
+#endif
+  debug_log ("CvmFile::import() removed " + temporary_path );
+  try {
+  	company.add_revision ( revision, exercise );
+  } catch (Dfp::Exception &e) 
+  {
+	debug_log( "CvmFile::import() add revision throws: ");
+	debug_log( e.what() );
+	throw;
+  }
 }
 

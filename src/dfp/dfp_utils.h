@@ -22,7 +22,8 @@
 ///\file
 namespace Dfp {
   void debug_log ( const std::string& str );
-  void setup_dbase ( const std::string & user, const std::string &passwd,
+  void setup_dbase ( const std::string & user, 
+		  const std::string &passwd,
     const std::string &host, const std::string &denetpwd );
 }
 #endif

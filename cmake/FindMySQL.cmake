@@ -28,9 +28,8 @@ if( WIN32 )
 	set(MYPRG "PROGRAMFILES(x86)")
 	find_path( MYSQL_INCLUDE_DIR
 		NAMES "mysql.h"
-		PATHS "$ENV{PROGRAMFILES}/MySQL/*/include"
-		"$ENV{${MYPRG}}/MySQL/*/include"
-			  "$ENV{SYSTEMDRIVE}/MySQL/*/include" )
+		PATHS "$ENV{PROGRAMFILES}/MySQL/MySQL Server 5.7/include"
+		"$ENV{${MYPRG}}/MySQL/MySQL Server 5.7/include")
 	
 	find_library( MYSQL_LIBRARY
 		NAMES "mysqlclient" "mysqlclient_r"

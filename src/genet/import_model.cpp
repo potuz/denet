@@ -21,6 +21,7 @@
 #include "import_model.h"
 #include "genet_database.h"
 #include "dfp/dfp_exception.h"
+#include "dfp/dfp_utils.h" 
 
 Genet::ImportModel::ImportModel(int cvm, const GenetDatabase &conn,
                                                               QObject *parent) 
@@ -75,6 +76,8 @@ Genet::ImportModel::ImportModel(int cvm, const GenetDatabase &conn,
       std::cerr << "Controle a sua conexão.\n";
       exit (1);
     }
+    Dfp::debug_log ( "Genet::ImportModel::ImportModel() Dfp::Exception thrown:");
+    Dfp::debug_log ( e.what() ); 
     throw;
   }
 }

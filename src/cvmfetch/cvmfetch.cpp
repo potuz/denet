@@ -180,7 +180,6 @@ int main (int argc, const char * argv[] ) {
 	TCHAR lpTempPathBuffer[100];
 	DWORD dwRetVal = 0;
 	dwRetVal = GetTempPath(100, lpTempPathBuffer);
-	std::string temporary_path;
 	temporary_path.assign(lpTempPathBuffer);
     #elif defined (__linux)
     const char* tmpdir = getenv ("TMPDIR");
@@ -243,7 +242,6 @@ int main (int argc, const char * argv[] ) {
 	TCHAR lpTempPathBuffer[100];
 	DWORD dwRetVal = 0;
 	dwRetVal = GetTempPath(100, lpTempPathBuffer);
-	std::string temporary_path;
 	temporary_path.assign(lpTempPathBuffer);
     #elif defined (__linux)
     const char* tmpdir = getenv ("TMPDIR");

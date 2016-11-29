@@ -23,6 +23,10 @@
 #include <QLibraryInfo>
 #include <QDebug>
 #include <QMessageBox>
+#ifdef _WIN32
+#include <QtPlugin>
+Q_IMPORT_PLUGIN (QWindowsIntegrationPlugin);
+#endif
 #include "config.h"
 #include "mainwindow.h"
 
