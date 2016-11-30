@@ -48,7 +48,11 @@ if("${CMAKE_BUILD_TYPE}_" STREQUAL "DEBUG_")
   configure_file ( src/genet/images/application-exit.png
     "${PROJECT_BINARY_DIR}/images/application-exit.png" COPYONLY)
 else("${CMAKE_BUILD_TYPE}_" STREQUAL "DEBUG_")
-	set ( DATAFILE_PATH "${CMAKE_INSTALL_PREFIX}/share/" )
+	if(WIN32)
+		set ( DATAFILE_PATH "${CMAKE_INSTALL_PREFIX}/share/denet/" )
+	else(WIN32)
+		set ( DATAFILE_PATH "${CMAKE_INSTALL_PREFIX}/share/denet/" )
+	endif(WIN32)
 	set ( IMAGEFILE_PATH "${DATAFILE_PATH}images/" )
 	set ( PROJECT_VERSION_COMPLETE
 		"${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}_alpha")
