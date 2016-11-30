@@ -19,7 +19,11 @@ else(WIN32)
 endif(WIN32)
 
 configure_file ( README.md.in "${CMAKE_SOURCE_DIR}/README.md")
-
+if(NOT CMAKE_BUILD_TYPE)
+	set(CMAKE_BUILD_TYPE "Release" CACHE STRING
+		"Choose the type of build, options are: Debug Release"
+		FORCE)
+endif(NOT CMAKE_BUILD_TYPE)
 if("${CMAKE_BUILD_TYPE}_" STREQUAL "DEBUG_")
   set ( DATAFILE_PATH "${PROJECT_BINARY_DIR}/" )
   set ( IMAGEFILE_PATH "${PROJECT_BINARY_DIR}/images/" )
