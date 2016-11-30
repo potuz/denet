@@ -23,6 +23,8 @@ if(NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE "Release" CACHE STRING
 		"Choose the type of build, options are: Debug Release"
 		FORCE)
+elseif (CMAKE_BUILD_TYPE STREQUAL "None")
+	add_definitions(-DNDEBUG)
 endif(NOT CMAKE_BUILD_TYPE)
 if("${CMAKE_BUILD_TYPE}_" STREQUAL "DEBUG_")
   set ( DATAFILE_PATH "${PROJECT_BINARY_DIR}/" )
