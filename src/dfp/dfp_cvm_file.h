@@ -18,7 +18,6 @@
  */
 #ifndef DFP_CVM_FILE_INCLUDED
 #define DFP_CVM_FILE_INCLUDED
-#include "dfp_dlldefines.h" 
 #include <string>
 #include <memory>
 #include <ctime>

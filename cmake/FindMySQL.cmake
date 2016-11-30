@@ -38,21 +38,25 @@ if( WIN32 )
 			  "$ENV{SYSTEMDRIVE}/MySQL/*/lib" )
 else()
 	find_path( MYSQL_INCLUDE_DIR
-		NAMES "mysql.h"
-		PATHS "/usr/include/mysql"
-			  "/usr/local/include/mysql"
-			  "/usr/mysql/include/mysql" )
+		NAMES 
+			"mysql.h"
+		PATHS 
+			"/usr/include"
+			"/usr/include/mysql"
+			"/usr/local/include/mysql"
+			"/usr/mysql/include/mysql" )
 	
 	find_library( MYSQL_LIBRARY
 		NAMES "mysqlclient" "mysqlclient_r"
-		PATHS "/lib/mysql"
-			  "/lib64/mysql"
-			  "/usr/lib/mysql"
-			  "/usr/lib64/mysql"
-			  "/usr/local/lib/mysql"
-			  "/usr/local/lib64/mysql"
-			  "/usr/mysql/lib/mysql"
-			  "/usr/mysql/lib64/mysql" )
+		PATHS 
+			"/lib/mysql"
+			"/lib64/mysql"
+			"/usr/lib/mysql"
+			"/usr/lib64/mysql"
+			"/usr/local/lib/mysql"
+			"/usr/local/lib64/mysql"
+			"/usr/mysql/lib/mysql"
+			"/usr/mysql/lib64/mysql" )
 endif()
 
 
