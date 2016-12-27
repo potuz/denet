@@ -12,42 +12,46 @@
 
 <ol>
 <li>Uma Biblioteca <code>C++</code> <code>libdfp</code> que nesta versão suporta:
+
 <ul>
 <li>Listar arquivos disponíveis na CVM para download.</li>
 <li>Baixar arquivos automaticamente da CVM.</li>
 <li>Importar ITR e DFP para uma base de dados MySQL (local ou externa).</li>
 <li>Reportar indicadores fundamentalistas de uma empresa dada.</li>
-<li>Criar e iniciar a base de dados no servidor indicado (precisa acesso root ao servidor MySQL). </li>
+<li>Criar e iniciar a base de dados no servidor indicado (precisa acesso root ao servidor MySQL).</li>
 </ul></li>
-<li>Ferramentas CLI escritas em <code>C++</code> <code>denet</code> e <code>cvmfetch</code> que são clientes de <code>libdfp</code> na linha de comando. </li>
+<li>Ferramentas CLI escritas em <code>C++</code> <code>denet</code> e <code>cvmfetch</code> que são clientes de <code>libdfp</code> na linha de comando.</li>
 <li>Um GUI <code>genet</code> escrito em <code>C++</code> utilizando <code>QT5</code> que além de implementar todas as funcionalidades de <code>libdfp</code> também suporta:
-*Resumo dos indicadores fundamentalistas principais, trimestrais e anualizados das companhias. 
-*Visualização e edição do balanço completo, correção das entradas na base de dados. 
-*Gráficos de evolução dos principais indicadores fundamentalistas
-*Reportes dos resultados das companhias. </li>
+<em>Resumo dos indicadores fundamentalistas principais, trimestrais e anualizados das companhias.
+</em>Visualização e edição do balanço completo, correção das entradas na base de dados.
+<em>Gráficos de evolução dos principais indicadores fundamentalistas
+</em>Reportes dos resultados das companhias.</li>
 </ol>
 
 <h2>Requisitos</h2>
 
 <ol>
-<li><code>libdfp</code> requere de 
+<li><code>libdfp</code> requere de
+
 <ul>
 <li><code>MySql</code>.</li>
 <li><code>MySql Connector++</code>.</li>
 <li><a href="http://www.libarchive.org">libarchive</a> - Para descomprimir os archivos da CVM.</li>
-<li><a href="https://curl.haxx.se/libcurl/">libcurl</a> - Para baixar os archivos da CVM e obter preços do <a href="https://finance.yahoo.com/q?s=API">Yahoo!</a> </li>
+<li><a href="https://curl.haxx.se/libcurl/">libcurl</a> - Para baixar os archivos da CVM e obter preços do <a href="https://finance.yahoo.com/q?s=API">Yahoo!</a></li>
 <li><a href="http://pugixml.org/">pugixml</a> - Para ler os documentos <code>XML</code> da CVM (incluído nesta distribuição).</li>
 </ul></li>
-<li><code>denet</code> e <code>cvmfetch</code> precisam além de 
+<li><code>denet</code> e <code>cvmfetch</code> precisam além de
+
 <ul>
-<li><a href="http://ezoptionparser.sourceforge.net">ezOptionParser</a> - Para analisar os argumentos no CLI (incluído nesta distribuição). </li>
+<li><a href="http://ezoptionparser.sourceforge.net">ezOptionParser</a> - Para analisar os argumentos no CLI (incluído nesta distribuição).</li>
 </ul></li>
 <li><code>genet</code> precisa de
+
 <ul>
-<li><a href="http://qt-project.org/qt5">Qt5>=5.7</a> incluindo <code>QtWidgets</code>, <code>QtConcurrent</code> e <code>QtCharts</code>. </li>
+<li><a href="http://qt-project.org/qt5">Qt5&gt;=5.7</a> incluindo <code>QtWidgets</code>, <code>QtConcurrent</code> e <code>QtCharts</code>.</li>
 </ul></li>
 <li>Para compilar precisa de pelo menos um compilador que possa interpretar <code>-std=c++14</code>. O sistema de instalação precisa de <code>CMake&gt;=3.1.0</code></li>
-<li>Antes de correr o programa pela primeira vez certifique que sua instalação de <code>MySQL</code> está funcionando e que você tem acesso ao usuário administrador (geralmente <em>root</em>).  </li>
+<li>Antes de correr o programa pela primeira vez certifique que sua instalação de <code>MySQL</code> está funcionando e que você tem acesso ao usuário administrador (geralmente <em>root</em>).</li>
 </ol>
 
 <h2>Instalação a partir do código fonte:</h2>
@@ -59,21 +63,21 @@
 <pre><code>mkdir build &amp;&amp; cd $_  
 cmake ../  
 make  
-sudo make install
+sudo make install  
 </code></pre>
 
 <h3>Windows</h3>
 
 <ul>
 <li>Abra o GUI de <code>CMake</code></li>
-<li>Escolha o diretório onde você descompactou as fontes e o diretório onde vai compilar (pode ser o mesmo das fontes, mas preferivelmente um novo diretório por exemplo <code>build</code>). </li>
+<li>Escolha o diretório onde você descompactou as fontes e o diretório onde vai compilar (pode ser o mesmo das fontes, mas preferivelmente um novo diretório por exemplo <code>build</code>).</li>
 <li>Clique em <code>Configure</code>.</li>
 <li>Abra o projeto em visual studio e compile.</li>
 </ul>
 
 <h2>Autor</h2>
 
-<p><strong>Potuz</strong> <a href="&#x6D;&#97;&#x69;&#108;&#116;&#111;:&#x70;&#111;&#x74;&#117;&#x7A;&#64;&#x70;&#111;t&#x75;&#122;&#46;&#x6E;&#x65;&#116;">&#x70;&#111;&#x74;&#117;&#x7A;&#64;&#x70;&#111;t&#x75;&#122;&#46;&#x6E;&#x65;&#116;</a></p>
+<p><strong>Potuz</strong> <a href="&#x6d;&#97;&#x69;&#x6c;&#x74;&#x6f;&#58;&#112;&#x6f;&#x74;&#117;&#x7a;&#64;&#x70;&#x6f;&#116;&#117;&#122;&#46;&#110;&#x65;&#116;">&#x70;&#x6f;&#116;&#117;&#122;&#x40;&#x70;&#x6f;&#x74;&#117;&#122;&#46;&#x6e;&#x65;&#x74;</a></p>
 
 <h2>Contato</h2>
 
@@ -88,9 +92,9 @@ sudo make install
 <ul>
 <li>Código em forma de patches contra <code>master</code> ou <em>pull requests</em>.</li>
 <li>Testar o aplicativo e informar de erros recebidos, erros de compilação, erros de <em>runtime</em>.</li>
-<li>Solicitar funcionalidades que você considere úteis. </li>
-<li>Escrever um manual ou ajudar a documentar o projeto. </li>
-<li>Português não é a minha primeira língua, correções nos textos tanto da página como nos aplicativos serão bem-vindas. </li>
+<li>Solicitar funcionalidades que você considere úteis.</li>
+<li>Escrever um manual ou ajudar a documentar o projeto.</li>
+<li>Português não é a minha primeira língua, correções nos textos tanto da página como nos aplicativos serão bem-vindas.</li>
 </ul>
 
 <h2>Licencia</h2>

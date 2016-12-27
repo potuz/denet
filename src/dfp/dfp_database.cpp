@@ -479,10 +479,15 @@ float Dfp::Database::get_indicator ( int cvm,  Dfp::Indicator indicator,
     case DFP_INDICATOR_DIVBRPL: return f(DFP_INDICATOR_LIAB)/f("2.03");
     case DFP_INDICATOR_PVP: return f(DFP_INDICATOR_MV)/f("2.03");
     case DFP_INDICATOR_DY: 
-                            { 
+                            try { 
                               float ret = (f("7.08.04.01") + f("7.08.04.02"))/f(DFP_INDICATOR_MV);
                               if (anual) return ret;
                               else return ret*4;
+                            } catch ( std::invalid_argument &e)
+                            {
+                              //TODO: This will be executed on financial
+                              //companies!
+                              return 0;
                             }
     case DFP_INDICATOR_PL: return f("2.03");
     case DFP_INDICATOR_REVENUES: return f("3.01");
@@ -561,7 +566,7 @@ void Dfp::Database::create_table (int cvm ) const
   stmt->execute ( "USE denet" );
   stmt->execute ( "CREATE TABLE IF NOT EXISTS `cvm_" + std::to_string (cvm) + 
       "` (number VARCHAR (15), name VARCHAR (100), date DATE, "
-      "balance_type INT, financial_info_type INT, value INT, "
+      "balance_type INT, financial_info_type INT, value BIGINT, "
       "comments VARCHAR(100), PRIMARY KEY ( number, date, financial_info_type"
       ", comments ) )");
 };
@@ -583,7 +588,7 @@ void Dfp::Database::import_account ( int cvm,
   prep_stmt->setDateTime (3, acct.date.c_str() );
   prep_stmt->setInt (4, static_cast<int> ( acct.balance_type ));
   prep_stmt->setInt (5, static_cast<int> (acct.financial_info_type ) );
-  prep_stmt->setInt (6, acct.value);
+  prep_stmt->setInt64 (6, acct.value);
   prep_stmt->setString (7, acct.comments);
   prep_stmt->execute();
 }

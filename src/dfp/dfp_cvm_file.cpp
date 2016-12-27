@@ -343,7 +343,7 @@ void Dfp::CvmFile::import (const Dfp::Database &conn) {
         xmldoc.child("ArrayOfComposicaoCapitalSocialDemonstracaoFinanceira").\
         child("ComposicaoCapitalSocialDemonstracaoFinanceira").\
         child_value(share_number_string[i].c_str() ) );
-    acct.value  = (int) acct.value / quant_scale;
+    acct.value  = acct.value / quant_scale;
     acct.balance_type = DFP_BALANCE_IF;
     acct.financial_info_type = DFP_FINANCIAL_INFO_CONSOLIDATED;
     acct.number = share_number_acct[i];

@@ -1,3 +1,5 @@
+*.deb
+*.msi
 src/.deps
 src/.exrc
 src/download-test.cpp

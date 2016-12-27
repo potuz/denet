@@ -54,7 +54,7 @@ namespace Dfp {
     std::string comments;
     BalanceType balance_type;
     FinancialInfoType financial_info_type;
-    int value;
+    long long value;
   };
   class Company;
   struct Ticker;
